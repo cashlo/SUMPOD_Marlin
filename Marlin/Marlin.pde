@@ -978,7 +978,7 @@ FORCE_INLINE void process_commands()
               disable_e2();
             }
           #endif 
-          LCD_MESSAGEPGM("Partial Release");
+          //LCD_MESSAGEPGM("Partial Release"); //do not show this message anymore
         }
       }
       break;
