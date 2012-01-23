@@ -861,6 +861,8 @@ FORCE_INLINE void process_commands()
               {
                  SERIAL_PROTOCOLLN( "?" );
               }
+            #else
+              SERIAL_PROTOCOLLN("");
             #endif
             codenum = millis();
           }
