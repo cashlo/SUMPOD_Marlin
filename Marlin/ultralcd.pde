@@ -1531,7 +1531,6 @@ void MainMenu::showMoveAxes()
             char cmd[10];
             sprintf(cmd,"G0 %c%s",'X'+aidx,ftostr52(encoderpos*10/((1==linechanging)?1.:100.)));
             enquecommand(cmd);
-            //QQQ better use this? st_synchronize(); //wait for all moves to finish
           }
           else
             encoderpos=(long)(current_position[aidx]*((1==linechanging)?1:100));
@@ -1830,23 +1829,25 @@ void MainMenu::update()
 {
   static MainStatus oldstatus=Main_Menu;  //init automatically causes foce_lcd_update=true
   static long timeoutToStatus=0;
-  static bool oldcardstatus=false;
+  static int oldcardstatus=-1;
+
   #ifdef CARDINSERTED
     if((CARDINSERTED != oldcardstatus))
     {
       force_lcd_update=true;
-      oldcardstatus=CARDINSERTED;
-      //Serial.println("echo: SD CHANGE");
       if(CARDINSERTED)
       {
         card.initsd();
-        LCD_MESSAGEPGM("Card inserted");
+        if( -1 != oldcardstatus )
+          LCD_MESSAGEPGM("Card inserted");
       }
       else
       {
         card.release();
-        LCD_MESSAGEPGM("Card removed");
+        if( -1 != oldcardstatus )
+          LCD_MESSAGEPGM("Card removed");
       }
+      oldcardstatus=CARDINSERTED;
     }
   #endif
  
