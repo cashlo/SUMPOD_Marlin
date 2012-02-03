@@ -221,20 +221,20 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define Y_HOME_DIR 1
 #define Z_HOME_DIR 1
 
-#define min_software_endstops true //If true, axis won't move to coordinates less than zero.
-#define max_software_endstops true  //If true, axis won't move to coordinates greater than the defined lengths below.
-#define X_MAX_LENGTH 130   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
-#define Y_MAX_LENGTH 125   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
-#define Z_MAX_LENGTH 94.5  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define min_software_endstops false //If true, axis won't move to coordinates less than zero.
+#define max_software_endstops false  //If true, axis won't move to coordinates greater than the defined lengths below.
+#define X_MAX_LENGTH 135   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Y_MAX_LENGTH 135   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Z_MAX_LENGTH 100   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {20*60, 20*60, 3*60, 0}  // set the homing speeds (mm/min) //[SUMPOD specific]
+#define HOMING_FEEDRATE {30*60, 30*60, 12*60, 0}  // set the homing speeds (mm/min) //[SUMPOD specific]
 
 //homing hits the endstop, then retracts by this distance, before it tries to slowly bump again:
 #define X_HOME_RETRACT_MM 5 
 #define Y_HOME_RETRACT_MM 5 
-#define Z_HOME_RETRACT_MM 1 
+#define Z_HOME_RETRACT_MM 2 
 //#define QUICK_HOME  //if this is defined, if both x and y are to be homed, a diagonal move will be performed initially. //[SUMPOD specific]
 
 #define AXIS_RELATIVE_MODES {false, false, false, false}
