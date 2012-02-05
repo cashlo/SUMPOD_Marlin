@@ -275,7 +275,7 @@
 #define TEMP_0_PIN         13   // ANALOG NUMBERING
 #define TEMP_1_PIN         -1   // ANALOG NUMBERING
 #define TEMP_2_PIN         -1   // ANALOG NUMBERING
-#define HEATER_BED_PIN     11   // BED //[SUMPOD specific]
+#define HEATER_BED_PIN      8   // BED //[SUMPOD specific- MUST SUPPLY EXTRA 12V-11A on second power input]
 #define TEMP_BED_PIN       14   // ANALOG NUMBERING
 
 //extra for SUMPOD LCD + click encoder + buzzer
