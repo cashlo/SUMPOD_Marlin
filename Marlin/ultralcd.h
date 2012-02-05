@@ -11,7 +11,7 @@
 
 
   #define LCD_UPDATE_INTERVAL 100
-  #define STATUSTIMEOUT 15000
+  #define STATUSTIMEOUT 30000
 
 
   
