@@ -1871,6 +1871,7 @@ void MainMenu::update()
         {
            linechanging=false;
            BLOCK
+           beepshort();
            status=Main_Menu;
            timeoutToStatus=millis()+STATUSTIMEOUT;
         }
