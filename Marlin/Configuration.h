@@ -56,9 +56,9 @@
 //#define HEATER_2_USES_AD595
 
 // Select one of these only to define how the bed temp is read.
-//#define THERMISTORBED 1
-//#define BED_USES_THERMISTOR
-//#define BED_LIMIT_SWITCHING
+#define THERMISTORBED 1
+#define BED_USES_THERMISTOR
+#define BED_LIMIT_SWITCHING
 #ifdef BED_LIMIT_SWITCHING
   #define BED_HYSTERESIS 2 //only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
 #endif
@@ -80,7 +80,7 @@
 #define HEATER_0_MINTEMP 5
 //#define HEATER_1_MINTEMP 5
 //#define HEATER_2_MINTEMP 5
-//#define BED_MINTEMP 5
+#define BED_MINTEMP 5
 
 
 // When temperature exceeds max temp, your heater will be switched off.
@@ -89,7 +89,7 @@
 #define HEATER_0_MAXTEMP 275
 //#define HEATER_1_MAXTEMP 275
 //#define HEATER_2_MAXTEMP 275
-//#define BED_MAXTEMP 150
+#define BED_MAXTEMP 150
 
 
 // Wait for Cooldown
