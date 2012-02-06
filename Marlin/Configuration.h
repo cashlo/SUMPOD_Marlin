@@ -28,7 +28,8 @@
 // Gen6 = 5,
 // Sanguinololu 1.2 and above = 62
 // Ultimaker = 7,
-// Teensylu = 8
+// Teensylu = 8,
+// Gen3+ =9
 #define MOTHERBOARD 33 //[SUMPOD specific, uses RAMPS1.3]
 
 //===========================================================================
@@ -54,6 +55,8 @@
 //#define HEATER_0_USES_AD595
 //#define HEATER_1_USES_AD595
 //#define HEATER_2_USES_AD595
+//#define HEATER_0_USES_MAX6675
+ 
 
 // Select one of these only to define how the bed temp is read.
 #define THERMISTORBED 1
@@ -201,6 +204,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define DISABLE_Y false
 #define DISABLE_Z true  //[SUMPOD specific]
 #define DISABLE_E false // For all extruders
+//#define Z_LATE_ENABLE // Enable Z the last moment. Needed if your Z driver overheats.
 
 // Inverting axis direction
 //#define INVERT_X_DIR false    // for Mendel set to false, for Orca set to true
