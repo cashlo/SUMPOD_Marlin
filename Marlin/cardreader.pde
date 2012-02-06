@@ -161,6 +161,7 @@ void CardReader::initsd()
   curDir=&root;
   if(!workDir.openRoot(&volume))
   {
+    SERIAL_ECHO_START;
     SERIAL_ECHOLNPGM("workDir open failed");
   }
 }
