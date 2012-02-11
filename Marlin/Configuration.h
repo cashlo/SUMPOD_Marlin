@@ -123,7 +123,6 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define DISABLE_Y false
 #define DISABLE_Z true  //[SUMPOD specific]
 #define DISABLE_E false // For all extruders
-//#define Z_LATE_ENABLE // Enable Z the last moment. Needed if your Z driver overheats.
 
 #define INVERT_X_DIR true    // for Mendel set to false, for Orca set to true
 #define INVERT_Y_DIR false    // for Mendel set to true, for Orca set to false
