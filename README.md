@@ -1,4 +1,4 @@
-SUMPOD specific MARLIN firmware (DEVELOPMENT STATE)
+SUMPOD specific MARLIN firmware (DEVELOPMENT STATE - RC1)
 
 Details + discussion: http://www.sumpod.com/forum
 
