@@ -496,7 +496,7 @@ void MainMenu::showPrepare()
   switch(i)
   {
     case ItemP_exit:
-      MENUITEM(  lcdprintPGM(" Main \003")  ,  BLOCK;status=Main_Menu;beepshort(); ) ;
+      MENUITEM(  lcdprintPGM(MSG_MAIN)  ,  BLOCK;status=Main_Menu;beepshort(); ) ;
       break;
     case ItemP_autostart:
       MENUITEM(  lcdprintPGM(MSG_AUTOSTART)  ,  BLOCK;card.lastnr=0;card.setroot();card.checkautostart(true);beepshort(); ) ;
@@ -2183,7 +2183,6 @@ char *ftostr52(const float &x)
   conv[8]=0;
   return conv;
 }
-
 
 #endif //ULTRA_LCD
 
