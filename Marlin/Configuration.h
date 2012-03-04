@@ -161,7 +161,8 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 // default settings 
 
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800,67.16}                    // default steps per unit for ultimaker //[SUMPOD specific]
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800,67.16}                    // default steps per unit for ultimaker //[SUMPOD specific]
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800,153}                    // default steps per unit for ultimaker //[SUMPOD specific]
 #define DEFAULT_MAX_FEEDRATE          {500, 500, 12, 45}    // (mm/sec) //[SUMPOD specific]    
 #define DEFAULT_MAX_ACCELERATION      {5000,5000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot. //[SUMPOD specific]
 
