@@ -12,7 +12,9 @@ extern volatile bool feedmultiplychanged;
 extern volatile int extrudemultiply;
 
 extern long position[4];   
+#ifdef SDSUPPORT
 extern CardReader card;
+#endif
 
 //===========================================================================
 //=============================public variables============================
@@ -410,7 +412,7 @@ void MainMenu::showStatus()
   uint8_t percent=card.percentDone();
   if(oldpercent!=percent ||force_lcd_update)
   {
-     lcd.setCursor(7,2);
+     lcd.setCursor(10,2);
     lcd.print(itostr3((int)percent));
     lcdprintPGM("%SD");
   }
@@ -499,7 +501,11 @@ void MainMenu::showPrepare()
       MENUITEM(  lcdprintPGM(MSG_MAIN)  ,  BLOCK;status=Main_Menu;beepshort(); ) ;
       break;
     case ItemP_autostart:
-      MENUITEM(  lcdprintPGM(MSG_AUTOSTART)  ,  BLOCK;card.lastnr=0;card.setroot();card.checkautostart(true);beepshort(); ) ;
+      MENUITEM(  lcdprintPGM(MSG_AUTOSTART)  ,  BLOCK;
+#ifdef SDSUPPORT
+          card.lastnr=0;card.setroot();card.checkautostart(true);
+#endif
+          beepshort(); ) ;
       break;
     case ItemP_disstep:
       MENUITEM(  lcdprintPGM(MSG_DISABLE_STEPPERS)  ,  BLOCK;enquecommand("M84");beepshort(); ) ;
@@ -660,8 +666,8 @@ void MainMenu::showTune()
       {
         if(force_lcd_update)
         {
-          lcd.setCursor(0,line);lcdprintPGM(" Fan speed:");
-          lcd.setCursor(13,line);lcd.print(ftostr3(fanpwm));
+          lcd.setCursor(0,line);lcdprintPGM(MSG_FAN_SPEED);
+          lcd.setCursor(13,line);lcd.print(ftostr3(FanSpeed));
         }
         
         if((activeline!=line) )
@@ -672,7 +678,7 @@ void MainMenu::showTune()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=fanpwm;
+              encoderpos=FanSpeed;
           }
           else
           {
@@ -685,8 +691,8 @@ void MainMenu::showTune()
         {
           if(encoderpos<0) encoderpos=0;
           if(encoderpos>255) encoderpos=255;
-          fanpwm=encoderpos;
-            analogWrite(FAN_PIN,  fanpwm);
+          FanSpeed=encoderpos;
+            analogWrite(FAN_PIN,  FanSpeed);
           lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
         }
         
@@ -983,7 +989,7 @@ void MainMenu::showControlTemp()
         if(force_lcd_update)
         {
           lcd.setCursor(0,line);lcdprintPGM(MSG_FAN_SPEED);
-          lcd.setCursor(13,line);lcd.print(ftostr3(fanpwm));
+          lcd.setCursor(13,line);lcd.print(ftostr3(FanSpeed));
         }
         
         if((activeline!=line) )
@@ -994,7 +1000,7 @@ void MainMenu::showControlTemp()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=fanpwm;
+              encoderpos=FanSpeed;
           }
           else
           {
@@ -1007,8 +1013,8 @@ void MainMenu::showControlTemp()
         {
           if(encoderpos<0) encoderpos=0;
           if(encoderpos>255) encoderpos=255;
-          fanpwm=encoderpos;
-            analogWrite(FAN_PIN,  fanpwm);
+          FanSpeed=encoderpos;
+            analogWrite(FAN_PIN,  FanSpeed);
           lcd.setCursor(13,line);lcd.print(itostr3(encoderpos));
         }
         
@@ -1484,7 +1490,7 @@ void MainMenu::showControlMotion()
         if(linechanging)
         {
           if(encoderpos<5) encoderpos=5;
-          if(encoderpos>99999) encoderpos=99999;
+          if(encoderpos>32000) encoderpos=32000;//TODO: This is a problem, encoderpos is 16bit, but steps_per_unit for e can be wel over 800
           lcd.setCursor(11,line);lcd.print(ftostr52(encoderpos/100.0));
         }
         
@@ -1826,7 +1832,19 @@ void MainMenu::showSD()
 //         }
 //       }break;
     case 1:
-      MENUITEM(  lcd.print(" ");card.getWorkDirName();if(card.filename[0]=='/') lcdprintPGM(MSG_REFRESH);else {lcd.print("\005");lcd.print(card.filename);lcd.print("/..");}  ,  BLOCK;card.updir();enforceupdate=true;lineoffset=0;beepshort(); ) ;
+      MENUITEM(  lcd.print(" ");card.getWorkDirName();
+	  if(card.filename[0]=='/') lcdprintPGM(MSG_REFRESH);
+	  else {
+		  lcd.print("\005");
+		  lcd.print(card.filename);
+		  lcd.print("/..");
+			}  ,  
+	BLOCK;
+			if(SDCARDDETECT == -1) card.initsd();
+			card.updir();
+			enforceupdate=true;
+			lineoffset=0;
+			beepshort(); ) ;
       
       break;
     default:
@@ -1893,7 +1911,7 @@ void MainMenu::showMainMenu()
   #endif
   if(tune)
   {
-    if(!(movesplanned() ||card.sdprinting))
+    if(!(movesplanned() || IS_SD_PRINTING))
     {
       force_lcd_update=true;
       tune=false;
@@ -1901,7 +1919,7 @@ void MainMenu::showMainMenu()
   }
   else 
   {
-    if(movesplanned() ||card.sdprinting)
+    if(movesplanned() || IS_SD_PRINTING)
     {
       force_lcd_update=true;
       tune=true;

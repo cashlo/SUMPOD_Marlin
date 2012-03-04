@@ -59,6 +59,7 @@ typedef struct {
   unsigned long initial_rate;                        // The jerk-adjusted step rate at start of block  
   unsigned long final_rate;                          // The minimal rate at exit
   unsigned long acceleration_st;                     // acceleration steps/sec^2
+  unsigned long fan_speed;
   volatile char busy;
 } block_t;
 
@@ -67,7 +68,7 @@ void plan_init();
 
 // Add a new linear movement to the buffer. x, y and z is the signed, absolute target position in 
 // millimaters. Feed rate specifies the speed of the motion.
-void plan_buffer_line(float &x, float &y, float &z, float &e, float feed_rate, uint8_t &extruder);
+void plan_buffer_line(const float &x, const float &y, const float &z, const float &e, float feed_rate, const uint8_t &extruder);
 
 // Set position. Used for G92 instructions.
 void plan_set_position(const float &x, const float &y, const float &z, const float &e);

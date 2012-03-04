@@ -59,6 +59,7 @@
 #include "stepper.h"
 #include "temperature.h"
 #include "ultralcd.h"
+#include "language.h"
 
 //===========================================================================
 //=============================public variables ============================
@@ -417,24 +418,34 @@ bool check_axes_activity() {
   unsigned char y_active = 0;  
   unsigned char z_active = 0;
   unsigned char e_active = 0;
+  unsigned char fan_speed = 0;
+  unsigned char tail_fan_speed = 0;
   block_t *block;
 
   if(block_buffer_tail != block_buffer_head) {
     uint8_t block_index = block_buffer_tail;
+    tail_fan_speed = block_buffer[block_index].fan_speed;
     while(block_index != block_buffer_head) {
       block = &block_buffer[block_index];
       if(block->steps_x != 0) x_active++;
       if(block->steps_y != 0) y_active++;
       if(block->steps_z != 0) z_active++;
       if(block->steps_e != 0) e_active++;
+      if(block->fan_speed != 0) fan_speed++;
       block_index = (block_index+1) & (BLOCK_BUFFER_SIZE - 1);
     }
+  }
+  else {
+    if (FanSpeed != 0) analogWrite(FAN_PIN,FanSpeed); // If buffer is empty use current fan speed
   }
   if((DISABLE_X) && (x_active == 0)) disable_x();
   if((DISABLE_Y) && (y_active == 0)) disable_y();
   if((DISABLE_Z) && (z_active == 0)) disable_z();
   if((DISABLE_E) && (e_active == 0)) { disable_e0();disable_e1();disable_e2(); }
-  
+  if((FanSpeed == 0) && (fan_speed ==0)) analogWrite(FAN_PIN, 0);
+  if (FanSpeed != 0 && tail_fan_speed !=0) { 
+    analogWrite(FAN_PIN,tail_fan_speed);
+  }
   return( (x_active != 0) || (y_active != 0) || (z_active != 0) || (e_active != 0) );
 }
 
@@ -443,24 +454,11 @@ float junction_deviation = 0.1;
 // Add a new linear movement to the buffer. steps_x, _y and _z is the absolute position in 
 // mm. Microseconds specify how many microseconds the move should take to perform. To aid acceleration
 // calculation the caller must also provide the physical length of the line in millimeters.
-void plan_buffer_line(float &x, float &y, float &z, float &e, float feed_rate, uint8_t &extruder)
+void plan_buffer_line(const float &x, const float &y, const float &z, const float &e, float feed_rate, const uint8_t &extruder)
 {
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
 
-  
-  if (min_software_endstops) {
-    if (x < X_HOME_POS) x = X_HOME_POS;
-    if (y < Y_HOME_POS) y = Y_HOME_POS;
-    if (z < Z_HOME_POS) z = Z_HOME_POS;
-  }
-
-  if (max_software_endstops) {
-    if (x > X_MAX_LENGTH) x = X_MAX_LENGTH;
-    if (y > Y_MAX_LENGTH) y = Y_MAX_LENGTH;
-    if (z > Z_MAX_LENGTH) z = Z_MAX_LENGTH;
-  }
-  
   // If the buffer is full: good! That means we are well ahead of the robot. 
   // Rest here until there is room in the buffer.
   while(block_buffer_tail == next_buffer_head) { 
@@ -484,13 +482,13 @@ void plan_buffer_line(float &x, float &y, float &z, float &e, float feed_rate, u
     {
       position[E_AXIS]=target[E_AXIS]; //behave as if the move really took place, but ignore E part
       SERIAL_ECHO_START;
-      SERIAL_ECHOLNPGM(" cold extrusion prevented");
+      SERIAL_ECHOLNPGM(MSG_ERR_COLD_EXTRUDE_STOP);
     }
     if(labs(target[E_AXIS]-position[E_AXIS])>axis_steps_per_unit[E_AXIS]*EXTRUDE_MAXLENGTH)
     {
       position[E_AXIS]=target[E_AXIS]; //behave as if the move really took place, but ignore E part
       SERIAL_ECHO_START;
-      SERIAL_ECHOLNPGM(" too long extrusion prevented");
+      SERIAL_ECHOLNPGM(MSG_ERR_LONG_EXTRUDE_STOP);
     }
   #endif
   
@@ -512,6 +510,8 @@ void plan_buffer_line(float &x, float &y, float &z, float &e, float feed_rate, u
   // Bail if this is a zero-length block
   if (block->step_event_count <=dropsegments) { return; };
 
+  block->fan_speed = FanSpeed;
+  
   // Compute direction bits for this block 
   block->direction_bits = 0;
   if (target[X_AXIS] < position[X_AXIS]) { block->direction_bits |= (1<<X_AXIS); }
