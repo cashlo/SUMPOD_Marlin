@@ -218,7 +218,8 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/
-// #define PHOTOGRAPH_PIN     23
+#define PHOTOGRAPH_PIN     57
+#define PHOTOGRAPH_CHDK
 
 #include "Configuration_adv.h"
 #include "thermistortables.h"

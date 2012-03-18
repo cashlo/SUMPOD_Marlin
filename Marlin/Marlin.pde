@@ -1173,21 +1173,27 @@ void process_commands()
      {
       #ifdef PHOTOGRAPH_PIN
         #if (PHOTOGRAPH_PIN > -1)
-        const uint8_t NUM_PULSES=16;
-        const float PULSE_LENGTH=0.01524;
-        for(int i=0; i < NUM_PULSES; i++) {
-          WRITE(PHOTOGRAPH_PIN, HIGH);
-          _delay_ms(PULSE_LENGTH);
-          WRITE(PHOTOGRAPH_PIN, LOW);
-          _delay_ms(PULSE_LENGTH);
-        }
-        delay(7.33);
-        for(int i=0; i < NUM_PULSES; i++) {
-          WRITE(PHOTOGRAPH_PIN, HIGH);
-          _delay_ms(PULSE_LENGTH);
-          WRITE(PHOTOGRAPH_PIN, LOW);
-          _delay_ms(PULSE_LENGTH);
-        }
+          #ifdef PHOTOGRAPH_CHDK
+            WRITE(PHOTOGRAPH_PIN, HIGH);
+            delay(500);
+            WRITE(PHOTOGRAPH_PIN, LOW);
+          #else
+          const uint8_t NUM_PULSES=16;
+          const float PULSE_LENGTH=0.01524;
+          for(int i=0; i < NUM_PULSES; i++) {
+            WRITE(PHOTOGRAPH_PIN, HIGH);
+            _delay_ms(PULSE_LENGTH);
+            WRITE(PHOTOGRAPH_PIN, LOW);
+            _delay_ms(PULSE_LENGTH);
+          }
+          delay(7.33);
+          for(int i=0; i < NUM_PULSES; i++) {
+            WRITE(PHOTOGRAPH_PIN, HIGH);
+            _delay_ms(PULSE_LENGTH);
+            WRITE(PHOTOGRAPH_PIN, LOW);
+            _delay_ms(PULSE_LENGTH);
+          }
+          #endif
         #endif
       #endif
      }
