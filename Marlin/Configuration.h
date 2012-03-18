@@ -26,8 +26,8 @@
 // Gen6 = 5
 // Gen6 deluxe = 51
 // Sanguinololu 1.2 and above = 62
-// Ultimaker = 7,
-// Teensylu = 8,
+// Ultimaker = 7
+// Teensylu = 8
 // Gen3+ =9
 #define MOTHERBOARD 33 //[SUMPOD specific, uses RAMPS1.3]
 
@@ -82,13 +82,13 @@
   //#define PID_OPENLOOP 1 // Puts PID in open loop. M104 sets the output power in %
   #define PID_INTEGRAL_DRIVE_MAX 255  //limit for the integral term
   #define K1 0.95 //smoothing factor withing the PID
-  #define PID_dT 0.128 //sampling period of the PID
+  #define PID_dT ((16.0 * 8.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
     #define  DEFAULT_Kp  22.2
-    #define  DEFAULT_Ki (1.25*PID_dT)  
-    #define  DEFAULT_Kd (99/PID_dT)  
+    #define  DEFAULT_Ki (1.08*PID_dT)  
+    #define  DEFAULT_Kd (114/PID_dT)  
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -118,6 +118,7 @@
 const bool X_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops. 
 const bool Y_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops. 
 const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of the endstops. 
+//#define DISABLE_MAX_ENDSTOPS
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
 #define X_ENABLE_ON 0
@@ -172,6 +173,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 // 
 #define DEFAULT_XYJERK                20.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
+#define DEFAULT_EJERK                 5.0    // (mm/sec)
 
 //===========================================================================
 //=============================Additional Features===========================
