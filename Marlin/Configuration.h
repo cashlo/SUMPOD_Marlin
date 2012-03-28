@@ -8,7 +8,7 @@
 //User specified version info of THIS file to display in [Pronterface, etc] terminal window during startup.
 //Implementation of an idea by Prof Braino to inform user that any changes made
 //to THIS file by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2012-03-04" //Personal revision number for changes to THIS file.
+#define STRING_VERSION_CONFIG_H "2012-03-28" //Personal revision number for changes to THIS file.
 #define STRING_CONFIG_H_AUTHOR "stohn" //Who made the changes.
 
 // This determines the communication speed of the printer
@@ -29,7 +29,12 @@
 // Ultimaker = 7
 // Teensylu = 8
 // Gen3+ =9
+
 #define MOTHERBOARD 33 //[SUMPOD specific, uses RAMPS1.3]
+
+#ifndef MOTHERBOARD
+#define MOTHERBOARD 7
+#endif
 
 //===========================================================================
 //=============================Thermal Settings  ============================
@@ -62,7 +67,7 @@
 //#define HEATER_0_MINTEMP 5 //[[SUMPOD, when used for milling, no thermistor is attached]]
 //#define HEATER_1_MINTEMP 5 //[[SUMPOD, when used for milling, no thermistor is attached]]
 //#define HEATER_2_MINTEMP 5 //[[SUMPOD, when used for milling, no thermistor is attached]]
-#define BED_MINTEMP 5
+//#define BED_MINTEMP 5  //[[SUMPOD, when there is no bed / used for milling, no thermistor is attached]]
 
 // When temperature exceeds max temp, your heater will be switched off.
 // This feature exists to protect your hotend from overheating accidentally, but *NOT* from thermistor short/failure!
@@ -86,9 +91,9 @@
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-    #define  DEFAULT_Kp  22.2
-    #define  DEFAULT_Ki (1.08*PID_dT)  
-    #define  DEFAULT_Kd (114/PID_dT)  
+    #define  DEFAULT_Kp 22.2
+    #define  DEFAULT_Ki 1.08  
+    #define  DEFAULT_Kd 114  
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -96,9 +101,9 @@
 //    #define  DEFAULT_Kd 12  
 
 // Mendel Parts V9 on 12V    
-//    #define  DEFAULT_Kp  63.0
-//    #define  DEFAULT_Ki (2.25*PID_dT)  
-//    #define  DEFAULT_Kd (440/PID_dT)
+//    #define  DEFAULT_Kp 63.0
+//    #define  DEFAULT_Ki 2.25
+//    #define  DEFAULT_Kd 440
 #endif // PIDTEMP
 
 //this prevents dangerous Extruder moves, i.e. if the temperature is under the limit
@@ -214,7 +219,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #else //no panel but just lcd 
   #ifdef ULTRA_LCD
     #define LCD_WIDTH 16
-    #define LCD_HEIGHT 2
+    #define LCD_HEIGHT 2    
   #endif
 #endif
 
