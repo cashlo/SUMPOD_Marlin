@@ -90,10 +90,15 @@
   #define PID_dT ((16.0 * 8.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
+// SUMPOD
+    #define  DEFAULT_Kp 32.53
+    #define  DEFAULT_Ki 2.67  
+    #define  DEFAULT_Kd 132.17
+ 
 // Ultimaker
-    #define  DEFAULT_Kp 22.2
-    #define  DEFAULT_Ki 1.08  
-    #define  DEFAULT_Kd 114  
+//    #define  DEFAULT_Kp 22.2
+//    #define  DEFAULT_Ki 1.08  
+//    #define  DEFAULT_Kd 114  
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -152,9 +157,9 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 #define min_software_endstops false //If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops false  //If true, axis won't move to coordinates greater than the defined lengths below.
-#define X_MAX_LENGTH 135 //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
-#define Y_MAX_LENGTH 135 //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
-#define Z_MAX_LENGTH 100 //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define X_MAX_LENGTH 130  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Y_MAX_LENGTH 130  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Z_MAX_LENGTH 86.5 //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 
 // The position of the homing switches. Use MAX_LENGTH * -0.5 if the center should be 0, 0, 0
 #define X_HOME_POS X_MAX_LENGTH
@@ -170,9 +175,9 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800,67.16}                    // default steps per unit for ultimaker //[SUMPOD specific]
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800,153}                    // default steps per unit for ultimaker //[SUMPOD specific]
 #define DEFAULT_MAX_FEEDRATE          {500, 500, 12, 45}    // (mm/sec) //[SUMPOD specific]    
-#define DEFAULT_MAX_ACCELERATION      {5000,5000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot. //[SUMPOD specific]
+#define DEFAULT_MAX_ACCELERATION      {2000,2000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot. //[SUMPOD specific]
 
-#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
+#define DEFAULT_ACCELERATION          2000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
 
 // 
@@ -208,8 +213,8 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
   #define LCD_HEIGHT 2 //4  //[SUMPOD specific]
 
 // Preheat Constants
-  #define PLA_PREHEAT_HOTEND_TEMP 180 
-  #define PLA_PREHEAT_HPB_TEMP 70
+  #define PLA_PREHEAT_HOTEND_TEMP 190 
+  #define PLA_PREHEAT_HPB_TEMP 65
   #define PLA_PREHEAT_FAN_SPEED 255		// Insert Value between 0 and 255
 
   #define ABS_PREHEAT_HOTEND_TEMP 240
