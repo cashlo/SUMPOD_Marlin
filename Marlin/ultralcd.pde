@@ -426,49 +426,46 @@ void MainMenu::showStatus()
 #endif
 #else //smaller LCDS----------------------------------
   static int olddegHotEnd0=-1;
-  static int oldtargetHotEnd0=-1;
   if(force_lcd_update)  //initial display of content
   {
     clear();
     encoderpos=feedmultiply;
-    lcd.setCursor(0,0);lcdprintPGM("\002123/567\001");
+    lcd.setCursor(0,0);lcdprintPGM("\002123\001|");
+    #if EXTRUDERS>1
+    lcd.setCursor(6,0);lcdprintPGM("567\001");
+    #endif    
     #if defined BED_USES_THERMISTOR || defined BED_USES_AD595 
-    lcd.setCursor(9,0);lcdprintPGM("123/567\001");
+    lcd.setCursor(10,0);lcdprintPGM("B:123\001");
     #endif
   }
-    
+
   int tHotEnd0=intround(degHotend0());
-  int ttHotEnd0=intround(degTargetHotend0());
-
-
   if((abs(tHotEnd0-olddegHotEnd0)>1)||force_lcd_update)
   {
     lcd.setCursor(1,0);
     lcd.print(ftostr3(tHotEnd0));
     olddegHotEnd0=tHotEnd0;
   }
-  if((ttHotEnd0!=oldtargetHotEnd0)||force_lcd_update)
+
+  #if EXTRUDERS>1
+  static int olddegHotEnd1=-1;
+  int tHotEnd1=intround(degHotend1());
+  if((abs(tHotEnd1-olddegHotEnd1)>1)||force_lcd_update)
   {
-    lcd.setCursor(5,0);
-    lcd.print(ftostr3(ttHotEnd0));
-    oldtargetHotEnd0=ttHotEnd0;
+    lcd.setCursor(6,0);
+    lcd.print(ftostr3(tHotEnd1));
+    olddegHotEnd1=tHotEnd1;
   }
+  #endif
+
   #if defined BED_USES_THERMISTOR || defined BED_USES_AD595 
     static int oldtBed=-1;
-    static int oldtargetBed=-1; 
     int tBed=intround(degBed());
     if((tBed!=oldtBed)||force_lcd_update)
     {
-      lcd.setCursor(9,0);
+      lcd.setCursor(12,0);
       lcd.print(ftostr3(tBed));
       oldtBed=tBed;
-    }
-    int targetBed=intround(degTargetBed());
-    if((targetBed!=oldtargetBed)||force_lcd_update)
-    {
-      lcd.setCursor(13,0);
-      lcd.print(ftostr3(targetBed));
-      oldtargetBed=targetBed;
     }
   #endif
 
