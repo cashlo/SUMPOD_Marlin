@@ -716,7 +716,7 @@ void MainMenu::showTune()
       if(force_lcd_update)
         {
           lcd.setCursor(0,line);lcdprintPGM(MSG_FLOW);
-          lcd.setCursor(13,line);lcd.print(itostr4(axis_steps_per_unit[3]));
+          lcd.setCursor(8,line);lcd.print(ftostr52(axis_steps_per_unit[E_AXIS]));
         }
         
         if((activeline!=line) )
@@ -727,16 +727,15 @@ void MainMenu::showTune()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)axis_steps_per_unit[3];
+              encoderpos=(long)(axis_steps_per_unit[E_AXIS]*100.0);
           }
           else
           {
-            float factor=float(encoderpos)/float(axis_steps_per_unit[3]);
+            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[E_AXIS]);
             position[E_AXIS]=lround(position[E_AXIS]*factor);
-            //current_position[3]*=factor;
-            axis_steps_per_unit[E_AXIS]= encoderpos;
+            //current_position[E_AXIS]*=factor;
+            axis_steps_per_unit[E_AXIS]= encoderpos/100.0;
             encoderpos=activeline*lcdslow;
-              
           }
           BLOCK;
           beepshort();
@@ -744,8 +743,8 @@ void MainMenu::showTune()
         if(linechanging)
         {
           if(encoderpos<5) encoderpos=5;
-          if(encoderpos>9999) encoderpos=9999;
-          lcd.setCursor(13,line);lcd.print(itostr4(encoderpos));
+          if(encoderpos>999999) encoderpos=999999;
+          lcd.setCursor(8,line);lcd.print(ftostr52(encoderpos/100.0));
         }
         
       }break; 
@@ -1050,7 +1049,7 @@ void MainMenu::showControlTemp()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)Kp;
+              encoderpos=(long)Kp;
           }
           else
           {
@@ -1085,7 +1084,7 @@ void MainMenu::showControlTemp()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)(Ki*10/PID_dT);
+              encoderpos=(long)(Ki*10/PID_dT);
           }
           else
           {
@@ -1121,7 +1120,7 @@ void MainMenu::showControlTemp()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)(Kd/5./PID_dT);
+              encoderpos=(long)(Kd/5./PID_dT);
           }
           else
           {
@@ -1157,7 +1156,7 @@ void MainMenu::showControlTemp()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)Kc;
+              encoderpos=(long)Kc;
           }
           else
           {
@@ -1230,7 +1229,7 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)acceleration/100;
+              encoderpos=(long)acceleration/100;
           }
           else
           {
@@ -1264,7 +1263,7 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)max_xy_jerk;
+              encoderpos=(long)max_xy_jerk;
           }
           else
           {
@@ -1307,7 +1306,7 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)max_feedrate[i-ItemCM_vmaxx];
+              encoderpos=(long)max_feedrate[i-ItemCM_vmaxx];
           }
           else
           {
@@ -1343,7 +1342,7 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)(minimumfeedrate);
+              encoderpos=(long)(minimumfeedrate);
           }
           else
           {
@@ -1378,7 +1377,7 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)mintravelfeedrate;
+              encoderpos=(long)mintravelfeedrate;
           }
           else
           {
@@ -1421,7 +1420,7 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)max_acceleration_units_per_sq_second[i-ItemCM_amaxx]/100;
+              encoderpos=(long)max_acceleration_units_per_sq_second[i-ItemCM_amaxx]/100;
           }
           else
           {
@@ -1455,7 +1454,7 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)retract_acceleration/100;
+              encoderpos=(long)retract_acceleration/100;
           }
           else
           {
@@ -1479,7 +1478,7 @@ void MainMenu::showControlMotion()
       if(force_lcd_update)
         {
           lcd.setCursor(0,line);lcdprintPGM(MSG_XSTEPS);
-          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[0]));
+          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[X_AXIS]));
         }
         
         if((activeline!=line) )
@@ -1490,13 +1489,13 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)(axis_steps_per_unit[0]*100.0);
+              encoderpos=(long)(axis_steps_per_unit[X_AXIS]*100.0);
           }
           else
           {
-            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[0]);
+            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[X_AXIS]);
             position[X_AXIS]=lround(position[X_AXIS]*factor);
-            //current_position[3]*=factor;
+            //current_position[X_AXIS]*=factor;
             axis_steps_per_unit[X_AXIS]= encoderpos/100.0;
             encoderpos=activeline*lcdslow;
           }
@@ -1506,7 +1505,7 @@ void MainMenu::showControlMotion()
         if(linechanging)
         {
           if(encoderpos<5) encoderpos=5;
-          if(encoderpos>32000) encoderpos=32000;//TODO: This is a problem, encoderpos is 16bit, but steps_per_unit for e can be wel over 800
+          if(encoderpos>999999) encoderpos=999999;
           lcd.setCursor(11,line);lcd.print(ftostr52(encoderpos/100.0));
         }
         
@@ -1516,7 +1515,7 @@ void MainMenu::showControlMotion()
       if(force_lcd_update)
         {
           lcd.setCursor(0,line);lcdprintPGM(MSG_YSTEPS);
-          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[1]));
+          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[Y_AXIS]));
         }
         
         if((activeline!=line) )
@@ -1527,16 +1526,15 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)(axis_steps_per_unit[1]*100.0);
+              encoderpos=(long)(axis_steps_per_unit[Y_AXIS]*100.0);
           }
           else
           {
-            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[1]);
+            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[Y_AXIS]);
             position[Y_AXIS]=lround(position[Y_AXIS]*factor);
-            //current_position[3]*=factor;
+            //current_position[Y_AXIS]*=factor;
             axis_steps_per_unit[Y_AXIS]= encoderpos/100.0;
             encoderpos=activeline*lcdslow;
-              
           }
           BLOCK;
           beepshort();
@@ -1544,7 +1542,7 @@ void MainMenu::showControlMotion()
         if(linechanging)
         {
           if(encoderpos<5) encoderpos=5;
-          if(encoderpos>9999) encoderpos=9999;
+          if(encoderpos>999999) encoderpos=999999;
           lcd.setCursor(11,line);lcd.print(ftostr52(encoderpos/100.0));
         }
         
@@ -1554,7 +1552,7 @@ void MainMenu::showControlMotion()
       if(force_lcd_update)
         {
           lcd.setCursor(0,line);lcdprintPGM(MSG_ZSTEPS);
-          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[2]));
+          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[Z_AXIS]));
         }
         
         if((activeline!=line) )
@@ -1565,16 +1563,15 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)(axis_steps_per_unit[2]*100.0);
+              encoderpos=(long)(axis_steps_per_unit[Z_AXIS]*100.0);
           }
           else
           {
-            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[2]);
+            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[Z_AXIS]);
             position[Z_AXIS]=lround(position[Z_AXIS]*factor);
-            //current_position[3]*=factor;
+            //current_position[Z_AXIS]*=factor;
             axis_steps_per_unit[Z_AXIS]= encoderpos/100.0;
             encoderpos=activeline*lcdslow;
-              
           }
           BLOCK;
           beepshort();
@@ -1582,7 +1579,7 @@ void MainMenu::showControlMotion()
         if(linechanging)
         {
           if(encoderpos<5) encoderpos=5;
-          if(encoderpos>9999) encoderpos=9999;
+          if(encoderpos>999999) encoderpos=999999;
           lcd.setCursor(11,line);lcd.print(ftostr52(encoderpos/100.0));
         }
         
@@ -1593,7 +1590,7 @@ void MainMenu::showControlMotion()
       if(force_lcd_update)
         {
           lcd.setCursor(0,line);lcdprintPGM(MSG_ESTEPS);
-          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[3]));
+          lcd.setCursor(11,line);lcd.print(ftostr52(axis_steps_per_unit[E_AXIS]));
         }
         
         if((activeline!=line) )
@@ -1604,16 +1601,15 @@ void MainMenu::showControlMotion()
           linechanging=!linechanging;
           if(linechanging)
           {
-              encoderpos=(int)(axis_steps_per_unit[3]*100.0);
+              encoderpos=(long)(axis_steps_per_unit[E_AXIS]*100.0);
           }
           else
           {
-            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[3]);
+            float factor=float(encoderpos)/100.0/float(axis_steps_per_unit[E_AXIS]);
             position[E_AXIS]=lround(position[E_AXIS]*factor);
-            //current_position[3]*=factor;
+            //current_position[E_AXIS]*=factor;
             axis_steps_per_unit[E_AXIS]= encoderpos/100.0;
             encoderpos=activeline*lcdslow;
-              
           }
           BLOCK;
           beepshort();
@@ -1621,7 +1617,7 @@ void MainMenu::showControlMotion()
         if(linechanging)
         {
           if(encoderpos<5) encoderpos=5;
-          if(encoderpos>9999) encoderpos=9999;
+          if(encoderpos>999999) encoderpos=999999;
           lcd.setCursor(11,line);lcd.print(ftostr52(encoderpos/100.0));
         }
         
