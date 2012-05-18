@@ -151,24 +151,24 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 // ENDSTOP SETTINGS:
 // Sets direction of endstops when homing; 1=MAX, -1=MIN
-#define X_HOME_DIR 1
-#define Y_HOME_DIR 1
+#define X_HOME_DIR -1
+#define Y_HOME_DIR -1
 #define Z_HOME_DIR 1
 
 #define min_software_endstops false //If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops false  //If true, axis won't move to coordinates greater than the defined lengths below.
-#define X_MAX_LENGTH 130  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
-#define Y_MAX_LENGTH 130  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
-#define Z_MAX_LENGTH 86.5 //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define X_MAX_LENGTH 120   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Y_MAX_LENGTH 142   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Z_MAX_LENGTH 74.1  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 
 // The position of the homing switches. Use MAX_LENGTH * -0.5 if the center should be 0, 0, 0
-#define X_HOME_POS X_MAX_LENGTH
-#define Y_HOME_POS Y_MAX_LENGTH
+#define X_HOME_POS 0
+#define Y_HOME_POS 0
 #define Z_HOME_POS Z_MAX_LENGTH
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {30*60, 30*60, 12*60, 0}  // set the homing speeds (mm/min) //[SUMPOD specific]
+#define HOMING_FEEDRATE {60*60, 60*60, 12*60, 0}  // set the homing speeds (mm/min) //[SUMPOD specific]
 
 // default settings 
 
