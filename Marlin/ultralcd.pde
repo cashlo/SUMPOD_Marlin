@@ -30,7 +30,7 @@ short lastenc=0;
 static char messagetext[LCD_WIDTH]="";
 
 //return for string conversion routines
-static char conv[8];
+static char conv[9];
 
 LiquidCrystal lcd(LCD_PINS_RS, LCD_PINS_ENABLE, LCD_PINS_D4, LCD_PINS_D5,LCD_PINS_D6,LCD_PINS_D7);  //RS,Enable,D4,D5,D6,D7 
 
