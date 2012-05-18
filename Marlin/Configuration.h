@@ -8,7 +8,7 @@
 //User specified version info of THIS file to display in [Pronterface, etc] terminal window during startup.
 //Implementation of an idea by Prof Braino to inform user that any changes made
 //to THIS file by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2012-05-07" //Personal revision number for changes to THIS file.
+#define STRING_VERSION_CONFIG_H "2012-05-18" //Personal revision number for changes to THIS file.
 #define STRING_CONFIG_H_AUTHOR "stohn" //Who made the changes.
 
 // This determines the communication speed of the printer
@@ -26,6 +26,7 @@
 // Gen6 = 5
 // Gen6 deluxe = 51
 // Sanguinololu 1.2 and above = 62
+// Melzi = 63
 // Ultimaker = 7
 // Teensylu = 8
 // Gen3+ =9
@@ -60,6 +61,7 @@
 // Actual temperature must be close to target for this long before M109 returns success
 #define TEMP_RESIDENCY_TIME 10	// (seconds)
 #define TEMP_HYSTERESIS 3       // (degC) range of +/- temperatures considered "close" to the target one
+#define TEMP_WINDOW     1       // (degC) Window around target to start the recidency timer x degC early.
 
 // The minimal temperature defines the temperature below which the heater will not be enabled It is used
 // to check that the wiring to the thermistor is not broken. 
@@ -94,11 +96,6 @@
     #define  DEFAULT_Kp 28.46
     #define  DEFAULT_Ki 2.78 
     #define  DEFAULT_Kd 96.99
-
-// Ultimaker
-//    #define  DEFAULT_Kp 22.2
-//    #define  DEFAULT_Ki 1.08  
-//    #define  DEFAULT_Kd 114  
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -185,7 +182,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define DEFAULT_MAX_FEEDRATE          {500, 500, 12, 80}       // (mm/sec) //[SUMPOD specific]    
 #define DEFAULT_MAX_ACCELERATION      {4000,4000,100,5000}     // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot. //[SUMPOD specific]
 
-#define DEFAULT_ACCELERATION          4000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
+#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
 
 // 
@@ -235,6 +232,9 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
     #define LCD_HEIGHT 2    
   #endif
 #endif
+
+// Increase the FAN pwm frequency. Removes the PWM noise but increases heating in the FET/Arduino
+#define FAST_PWM_FAN
 
 // M240  Triggers a camera by emulating a Canon RC-1 Remote
 // Data from: http://www.doc-diy.net/photo/rc-1_hacked/

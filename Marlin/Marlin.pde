@@ -36,6 +36,7 @@
 #include "watchdog.h"
 #include "EEPROMwrite.h"
 #include "language.h"
+#include "pins_arduino.h"
 
 #define VERSION_STRING  "1.0.0 RC2 - SUMPOD"
 
@@ -104,12 +105,12 @@
 // M240 - Trigger a camera to take a photograph
 // M301 - Set PID parameters P I and D
 // M302 - Allow cold extrudes
+// M303 - PID relay autotune S<temperature> sets the target temperature. (default target temperature = 150C)
 // M400 - Finish all moves
 // M500 - stores paramters in EEPROM
 // M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).  
 // M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 // M503 - print the current settings (from memory not from eeprom)
-// M303 - PID relay autotune S<temperature> sets the target temperature. (default target temperature = 150C)
 // M999 - Restart after being stopped by error
 
 //Stepper Movement Variables
@@ -136,6 +137,7 @@ float add_homeing[3]={0,0,0};
 float add_toolhead[3]={0,0,0}; 
 uint8_t active_extruder = 0;
 unsigned char FanSpeed=0;
+
 
 //===========================================================================
 //=============================private variables=============================
@@ -299,6 +301,8 @@ void setup()
   st_init();    // Initialize stepper;
   wd_init();
   setup_photpin();
+  
+  LCD_INIT;
 }
 
 
@@ -609,7 +613,7 @@ void process_commands()
       feedrate = 0.0;
       home_all_axis = !((code_seen(axis_codes[0])) || (code_seen(axis_codes[1])) || (code_seen(axis_codes[2])));
       #ifdef QUICK_HOME
-      if( code_seen(axis_codes[X_AXIS]) && code_seen(axis_codes[Y_AXIS]) )  //first diagonal move
+      if((home_all_axis)||( code_seen(axis_codes[X_AXIS]) && code_seen(axis_codes[Y_AXIS])) )  //first diagonal move
       {
         current_position[X_AXIS] = 0;current_position[Y_AXIS] = 0;  
 
@@ -848,10 +852,14 @@ void process_commands()
       }
       #if (TEMP_0_PIN > -1)
         SERIAL_PROTOCOLPGM("ok T:");
-        SERIAL_PROTOCOL(degHotend(tmp_extruder)); 
+        SERIAL_PROTOCOL_F(degHotend(tmp_extruder),1); 
+        SERIAL_PROTOCOLPGM(" /");
+        SERIAL_PROTOCOL_F(degTargetHotend(tmp_extruder),1); 
         #if TEMP_BED_PIN > -1
           SERIAL_PROTOCOLPGM(" B:");  
-          SERIAL_PROTOCOL(degBed());
+          SERIAL_PROTOCOL_F(degBed(),1);
+          SERIAL_PROTOCOLPGM(" /");
+          SERIAL_PROTOCOL_F(degTargetBed(),1);
         #endif //TEMP_BED_PIN
       #else
         SERIAL_ERROR_START;
@@ -883,7 +891,7 @@ void process_commands()
       if (code_seen('S')) setTargetHotend(code_value(), tmp_extruder);
       #ifdef AUTOTEMP
         if (code_seen('S')) autotemp_min=code_value();
-        if (code_seen('G')) autotemp_max=code_value();
+        if (code_seen('B')) autotemp_max=code_value();
         if (code_seen('F')) 
         {
           autotemp_factor=code_value();
@@ -910,9 +918,9 @@ void process_commands()
           if( (millis() - codenum) > 1000UL )
           { //Print Temp Reading and remaining time every 1 second while heating up/cooling down
             SERIAL_PROTOCOLPGM("T:");
-            SERIAL_PROTOCOL( degHotend(tmp_extruder) ); 
+            SERIAL_PROTOCOL_F(degHotend(tmp_extruder),1); 
             SERIAL_PROTOCOLPGM(" E:");
-            SERIAL_PROTOCOL( (int)tmp_extruder ); 
+            SERIAL_PROTOCOL((int)tmp_extruder); 
             #ifdef TEMP_RESIDENCY_TIME
               SERIAL_PROTOCOLPGM(" W:");
               if(residencyStart > -1)
@@ -935,8 +943,8 @@ void process_commands()
         #ifdef TEMP_RESIDENCY_TIME
             /* start/restart the TEMP_RESIDENCY_TIME timer whenever we reach target temp for the first time
               or when current temp falls outside the hysteresis after target temp was reached */
-          if ((residencyStart == -1 &&  target_direction && !isHeatingHotend(tmp_extruder)) ||
-              (residencyStart == -1 && !target_direction && !isCoolingHotend(tmp_extruder)) ||
+          if ((residencyStart == -1 &&  target_direction && (degHotend(tmp_extruder) >= (degTargetHotend(tmp_extruder)-TEMP_WINDOW))) ||
+              (residencyStart == -1 && !target_direction && (degHotend(tmp_extruder) <= (degTargetHotend(tmp_extruder)+TEMP_WINDOW))) ||
               (residencyStart > -1 && labs(degHotend(tmp_extruder) - degTargetHotend(tmp_extruder)) > TEMP_HYSTERESIS) ) 
           {
             residencyStart = millis();
@@ -961,9 +969,10 @@ void process_commands()
             SERIAL_PROTOCOLPGM("T:");
             SERIAL_PROTOCOL(tt);
             SERIAL_PROTOCOLPGM(" E:");
-            SERIAL_PROTOCOL( (int)active_extruder ); 
+            SERIAL_PROTOCOL((int)active_extruder); 
             SERIAL_PROTOCOLPGM(" B:");
-            SERIAL_PROTOCOLLN(degBed()); 
+            SERIAL_PROTOCOL_F(degBed(),1); 
+            SERIAL_PROTOCOLLN(""); 
             codenum = millis(); 
           }
           manage_heater();
@@ -1053,7 +1062,20 @@ void process_commands()
       for(int8_t i=0; i < NUM_AXIS; i++) 
       {
         if(code_seen(axis_codes[i])) 
-          axis_steps_per_unit[i] = code_value();
+          
+          if(i == 3) { // E
+            float value = code_value();
+            if(value < 20.0) {
+              float factor = axis_steps_per_unit[i] / value; // increase e constants if M92 E14 is given for netfab.
+              max_e_jerk *= factor;
+              max_feedrate[i] *= factor;
+              axis_steps_per_sqr_second[i] *= factor;
+            }
+            axis_steps_per_unit[i] = value;
+          }
+          else {
+            axis_steps_per_unit[i] = code_value();
+          }
       }
       break;
     case 115: // M115
@@ -1080,6 +1102,12 @@ void process_commands()
       SERIAL_PROTOCOL(float(st_get_position(Z_AXIS))/axis_steps_per_unit[Z_AXIS]);
       
       SERIAL_PROTOCOLLN("");
+      break;
+    case 120: // M120
+      enable_endstops(false) ;
+      break;
+    case 121: // M121
+      enable_endstops(true) ;
       break;
     case 119: // M119
       #if (X_MIN_PIN > -1)
@@ -1226,7 +1254,7 @@ void process_commands()
      }
     break;
       
-    case 302: // allow cold extrude
+    case 302: // allow cold extrudes
     {
       allow_cold_extrudes(true);
     }
@@ -1543,5 +1571,75 @@ void Stop()
 }
 
 bool IsStopped() { return Stopped; };
+
+#ifdef FAST_PWM_FAN
+void setPwmFrequency(uint8_t pin, int val)
+{
+  val &= 0x07;
+  switch(digitalPinToTimer(pin))
+  {
+ 
+    #if defined(TCCR0A)
+    case TIMER0A:
+    case TIMER0B:
+         TCCR0B &= ~(CS00 | CS01 | CS02);
+         TCCR0B |= val;
+         break;
+    #endif
+
+    #if defined(TCCR1A)
+    case TIMER1A:
+    case TIMER1B:
+         TCCR1B &= ~(CS10 | CS11 | CS12);
+         TCCR1B |= val;
+         break;
+    #endif
+
+    #if defined(TCCR2)
+    case TIMER2:
+    case TIMER2:
+         TCCR2 &= ~(CS10 | CS11 | CS12);
+         TCCR2 |= val;
+         break;
+    #endif
+
+    #if defined(TCCR2A)
+    case TIMER2A:
+    case TIMER2B:
+         TCCR2B &= ~(CS20 | CS21 | CS22);
+         TCCR2B |= val;
+         break;
+    #endif
+
+    #if defined(TCCR3A)
+    case TIMER3A:
+    case TIMER3B:
+    case TIMER3C:
+         TCCR3B &= ~(CS30 | CS31 | CS32);
+         TCCR3B |= val;
+         break;
+    #endif
+
+    #if defined(TCCR4A) 
+    case TIMER4A:
+    case TIMER4B:
+    case TIMER4C:
+         TCCR4B &= ~(CS40 | CS41 | CS42);
+         TCCR4B |= val;
+         break;
+   #endif
+
+    #if defined(TCCR5A) 
+    case TIMER5A:
+    case TIMER5B:
+    case TIMER5C:
+         TCCR5B &= ~(CS50 | CS51 | CS52);
+         TCCR5B |= val;
+         break;
+   #endif
+
+  }
+}
+#endif
 
 

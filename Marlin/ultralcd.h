@@ -7,6 +7,7 @@
   void lcd_init();
   void lcd_status(const char* message);
   void beep();
+  void buttons_init();
   void buttons_check();
 
   #define LCD_UPDATE_INTERVAL 100
@@ -134,11 +135,12 @@
   char *ftostr3(const float &x);
 
 
-
+  #define LCD_INIT lcd_init();
   #define LCD_MESSAGE(x) lcd_status(x);
   #define LCD_MESSAGEPGM(x) lcd_statuspgm(MYPGM(x));
   #define LCD_STATUS lcd_status()
 #else //no lcd
+  #define LCD_INIT
   #define LCD_STATUS
   #define LCD_MESSAGE(x)
   #define LCD_MESSAGEPGM(x)
