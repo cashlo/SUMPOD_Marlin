@@ -278,27 +278,18 @@
 #define SDPOWER            -1
 #define SDSS               53
 #define LED_PIN            13
-
-#if MOTHERBOARD == 33
-#define FAN_PIN            10 //[SUMPOD specific]
-#else
-#define FAN_PIN            4 // IO pin. Buffer needed
-#endif
+#define FAN_PIN            4  //[SUMPOD specific] IO pin. Buffer needed
 #define PS_ON_PIN          12
 #define KILL_PIN           -1
 
-#define HEATER_0_PIN       9   // EXTRUDER 1 //[SUMPOD specific]
-#if MOTHERBOARD == 33
-#define HEATER_1_PIN       -1
-#else
-#define HEATER_1_PIN       10  // EXTRUDER 2 (FAN PIN!!!)
-#endif
+#define HEATER_0_PIN       9    // EXTRUDER 1 //[SUMPOD specific]
+#define HEATER_1_PIN       10   // EXTRUDER 2 //[SUMPOD specific]
 #define HEATER_2_PIN       -1
 #define TEMP_0_PIN         13   // ANALOG NUMBERING
-#define TEMP_1_PIN         -1   // ANALOG NUMBERING
+#define TEMP_1_PIN         14   // ANALOG NUMBERING
 #define TEMP_2_PIN         -1   // ANALOG NUMBERING
 #define HEATER_BED_PIN      8   // BED //[SUMPOD specific- MUST SUPPLY EXTRA 12V-11A on second power input]
-#define TEMP_BED_PIN       14   // ANALOG NUMBERING
+#define TEMP_BED_PIN       15   // ANALOG NUMBERING
 
 #ifdef ULTRA_LCD
 
@@ -312,7 +303,7 @@
 
 #ifdef NEWPANEL
 //beeper    
-#define BEEPER             59 //AUX-2 //[SUMPOD specific]
+#define BEEPER             57 //AUX-3 //[SUMPOD specific]
 
 //encoder pins are directly attached
 #define BTN_EN1            42 //AUX-2 //[SUMPOD specific]
