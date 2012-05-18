@@ -53,7 +53,7 @@
 // 7 is 100k Honeywell thermistor 135-104LAG-J01
 
 #define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 0
+#define TEMP_SENSOR_1 1
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_BED 1
 
@@ -91,10 +91,10 @@
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // SUMPOD
-    #define  DEFAULT_Kp 32.53
-    #define  DEFAULT_Ki 2.67  
-    #define  DEFAULT_Kd 132.17
- 
+    #define  DEFAULT_Kp 28.46
+    #define  DEFAULT_Ki 2.78 
+    #define  DEFAULT_Kd 96.99
+
 // Ultimaker
 //    #define  DEFAULT_Kp 22.2
 //    #define  DEFAULT_Ki 1.08  
@@ -145,7 +145,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define INVERT_X_DIR true    // for Mendel set to false, for Orca set to true
 #define INVERT_Y_DIR false    // for Mendel set to true, for Orca set to false
 #define INVERT_Z_DIR true     // for Mendel set to false, for Orca set to true
-#define INVERT_E0_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E0_DIR true   // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E1_DIR false    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
