@@ -1,3 +1,5 @@
+#include "language.h"
+#include "temperature.h"
 #include "ultralcd.h"
 #ifdef ULTRA_LCD
 #include "Marlin.h"
@@ -34,7 +36,7 @@ short lastenc=0;
 static char messagetext[LCD_WIDTH]="";
 
 //return for string conversion routines
-static char conv[9];
+static char conv[8];
 
 LiquidCrystal lcd(LCD_PINS_RS, LCD_PINS_ENABLE, LCD_PINS_D4, LCD_PINS_D5,LCD_PINS_D6,LCD_PINS_D7);  //RS,Enable,D4,D5,D6,D7 
 
@@ -506,7 +508,7 @@ void MainMenu::showStatus()
   force_lcd_update=false;
 }
 
-enum {ItemP_exit, ItemP_autostart,ItemP_disstep,ItemP_home, ItemP_move, ItemP_origin, ItemP_preheat_pla, ItemP_preheat_abs, ItemP_cooldown,ItemP_extrude};
+enum {ItemP_exit, ItemP_autostart,ItemP_disstep,ItemP_home, ItemP_origin, ItemP_preheat_pla, ItemP_preheat_abs, ItemP_cooldown,/*ItemP_extrude,*/ItemP_move};
 
 //any action must not contain a ',' character anywhere, or this breaks:
 #define MENUITEM(repaint_action, click_action) \
@@ -541,9 +543,6 @@ void MainMenu::showPrepare()
     case ItemP_home:
       MENUITEM(  lcdprintPGM(MSG_AUTO_HOME)  ,  BLOCK;enquecommand("G28");beepshort(); ) ;
       break;
-    case ItemP_move:
-      MENUITEM(  lcdprintPGM(MSG_MOVE_AXIS)  ,  BLOCK;status=Sub_MoveAxes;beepshort(); ) ;
-      break;
     case ItemP_origin:
       MENUITEM(  lcdprintPGM(MSG_SET_ORIGIN)  ,  BLOCK;enquecommand("G92 X0 Y0 Z0");beepshort(); ) ;
       break;
@@ -564,16 +563,184 @@ void MainMenu::showPrepare()
     case ItemP_cooldown:
       MENUITEM(  lcdprintPGM(MSG_COOLDOWN)  ,  BLOCK;setTargetHotend0(0);setTargetHotend1(0);setTargetHotend2(0);setTargetBed(0);beepshort(); ) ;
       break;
-    case ItemP_extrude:
-      MENUITEM(  lcdprintPGM(" Extrude")  ,  BLOCK;enquecommand("G92 E0");enquecommand("G1 F700 E50");beepshort(); ) ;
+//    case ItemP_extrude:
+  //    MENUITEM(  lcdprintPGM(" Extrude")  ,  BLOCK;enquecommand("G92 E0");enquecommand("G1 F700 E50");beepshort(); ) ;
+    //  break;
+    case ItemP_move:
+      MENUITEM(  lcdprintPGM(MSG_MOVE_AXIS) , BLOCK;status=Sub_PrepareMove;beepshort(); );
       break;
         default:   
       break;
   }
   line++;
  }
- updateActiveLines(ItemP_extrude,encoderpos);
+ updateActiveLines(ItemP_move,encoderpos);
 #endif
+}
+
+enum {
+  ItemAM_exit,
+  ItemAM_X, ItemAM_Y, ItemAM_Z, ItemAM_E
+};
+
+void MainMenu::showAxisMove()
+{
+   uint8_t line=0;
+   int oldencoderpos=0;
+   clearIfNecessary();
+   for(int8_t i=lineoffset;i<lineoffset+LCD_HEIGHT;i++)
+   {
+     switch(i)
+      {
+          case ItemAM_exit:
+          MENUITEM(  lcdprintPGM(MSG_PREPARE_ALT)  ,  BLOCK;status=Main_Menu;beepshort(); ) ;
+          break;
+          case ItemAM_X:
+          {
+	 	  //oldencoderpos=0;
+                  if(force_lcd_update)
+                  {
+                    lcd.setCursor(0,line);lcdprintPGM(" X:");
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[X_AXIS]));
+                  }
+      
+                  if((activeline!=line) )
+                  break;
+                  
+                  if(CLICKED) 
+                  {
+                    linechanging=!linechanging;
+                    if(linechanging)
+                    {
+			enquecommand("G91");
+                    }
+                    else
+                    {
+		      enquecommand("G90");
+                      encoderpos=activeline*lcdslow;
+                      beepshort();
+                    }
+                    BLOCK;
+                  }
+                  if(linechanging)
+                  {
+                    if (encoderpos >0) 
+                   { 
+		    	enquecommand("G1 F700 X0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+		  
+		    else if (encoderpos < 0)
+                    {
+		    	enquecommand("G1 F700 X-0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[X_AXIS]));
+                  }
+          }
+          break;
+          case ItemAM_Y:
+            {
+                  if(force_lcd_update)
+                  {
+                    lcd.setCursor(0,line);lcdprintPGM(" Y:");
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Y_AXIS]));
+                  }
+      
+                  if((activeline!=line) )
+                  break;
+                  
+                  if(CLICKED) 
+                  {
+                    linechanging=!linechanging;
+                    if(linechanging)
+                    {
+			enquecommand("G91");
+                    }
+                    else
+                    {
+		      enquecommand("G90");
+                      encoderpos=activeline*lcdslow;
+                      beepshort();
+                    }
+                    BLOCK;
+                  }
+                  if(linechanging)
+                  {
+                    if (encoderpos >0) 
+                   { 
+		    	enquecommand("G1 F700 Y0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+		  
+		    else if (encoderpos < 0)
+                    {
+		    	enquecommand("G1 F700 Y-0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Y_AXIS]));
+                  }
+          }
+          break;
+          case ItemAM_Z:
+          {
+                  if(force_lcd_update)
+                  {
+                    lcd.setCursor(0,line);lcdprintPGM(" Z:");
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Z_AXIS]));
+                  }
+      
+                  if((activeline!=line) )
+                  break;
+                  
+                   if(CLICKED) 
+                  {
+                    linechanging=!linechanging;
+                    if(linechanging)
+                    {
+			enquecommand("G91");
+                    }
+                    else
+                    {
+		      enquecommand("G90");
+                      encoderpos=activeline*lcdslow;
+                      beepshort();
+                    }
+                    BLOCK;
+                  }
+                  if(linechanging)
+                  {
+                    if (encoderpos >0) 
+                   { 
+		    	enquecommand("G1 F70 Z0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+		  
+		    else if (encoderpos < 0)
+                    {
+		    	enquecommand("G1 F70 Z-0.1");
+			oldencoderpos=encoderpos;
+                        encoderpos=0;
+		    }
+                    lcd.setCursor(11,line);lcd.print(ftostr52(current_position[Z_AXIS]));
+                  }
+          }
+          break;
+          case ItemAM_E:
+          // ErikDB: TODO: this length should be changed for volumetric.
+          MENUITEM(  lcdprintPGM(MSG_EXTRUDE)  ,  BLOCK;enquecommand("G92 E0");enquecommand("G1 F700 E5");beepshort(); ) ;
+          break;
+          default:
+          break;
+      }
+      line++;
+   }
+   updateActiveLines(ItemAM_E,encoderpos);
 }
 
 enum {ItemT_exit,ItemT_speed,ItemT_flow,ItemT_nozzle,
@@ -739,7 +906,7 @@ void MainMenu::showTune()
       if(force_lcd_update)
         {
           lcd.setCursor(0,line);lcdprintPGM(MSG_FLOW);
-          lcd.setCursor(8,line);lcd.print(ftostr52(axis_steps_per_unit[E_AXIS]));
+          lcd.setCursor(9,line);lcd.print(ftostr52(axis_steps_per_unit[E_AXIS]));
         }
         
         if((activeline!=line) )
@@ -768,7 +935,7 @@ void MainMenu::showTune()
         {
           if(encoderpos<5) encoderpos=5;
           if(encoderpos>999999) encoderpos=999999;
-          lcd.setCursor(8,line);lcd.print(ftostr52(encoderpos/100.0));
+          lcd.setCursor(9,line);lcd.print(ftostr52(encoderpos/100.0));
         }
         
       }break; 
@@ -1540,6 +1707,8 @@ void MainMenu::showControlMotion()
         }
         
       }break;
+     
+    
     case ItemCM_aret://float retract_acceleration = 7000;
     {
         if(force_lcd_update)
@@ -1735,90 +1904,253 @@ void MainMenu::showControlMotion()
  updateActiveLines(ItemCM_esteps,encoderpos);
 }
 
+
 enum {
-  ItemMA_exit, 
-  ItemMA_X,ItemMA_Y,ItemMA_Z 
+  ItemR_exit,
+  ItemR_autoretract,
+  ItemR_retract_length,ItemR_retract_feedrate,ItemR_retract_zlift,
+  ItemR_unretract_length,ItemR_unretract_feedrate,
+  
 };
 
-void MainMenu::showMoveAxes()
+
+
+void MainMenu::showControlRetract()
 {
+#ifdef FWRETRACT
  uint8_t line=0;
  clearIfNecessary();
  for(int8_t i=lineoffset;i<lineoffset+LCD_HEIGHT;i++)
  {
-  uint8_t aidx = 0;
   switch(i)
   {
-    case ItemMA_exit:
-      MENUITEM(  lcdprintPGM(" Prepare \003")  ,  BLOCK;status=Main_Prepare;beepshort(); ) ;
+    case ItemR_exit:
+      MENUITEM(  lcdprintPGM(MSG_CONTROL)  ,  BLOCK;status=Main_Control;beepshort(); ) ;
       break;
-      
-    case ItemMA_Z:
-      aidx++;
-    case ItemMA_Y:
-      aidx++;
-    case ItemMA_X:
+    
+      //float retract_length=2, retract_feedrate=1200, retract_zlift=0.4;
+  //float retract_recover_length=0, retract_recover_feedrate=500;
+      case ItemR_autoretract:
       {
-        if( force_lcd_update )
+        if(force_lcd_update)
         {
-          lcd.setCursor(0,line);
-          if( ItemMA_Z == i ) lcdprintPGM(" Z:");
-          if( ItemMA_Y == i ) lcdprintPGM(" Y:");
-          if( ItemMA_X == i ) lcdprintPGM(" X:");
-          lcd.setCursor(8,line);lcd.print(ftostr52(current_position[aidx]*10));
+          lcd.setCursor(0,line);lcdprintPGM(MSG_AUTORETRACT);
+          lcd.setCursor(13,line);
+          if(autoretract_enabled)
+            lcdprintPGM(MSG_ON);
+          else
+            lcdprintPGM(MSG_OFF);
         }
-
+        
         if((activeline!=line) )
           break;
         
         if(CLICKED)
         {
-          linechanging++;
-          lcd.setCursor(3,line);
-          switch(linechanging)
+          autoretract_enabled=!autoretract_enabled;
+          lcd.setCursor(13,line);
+          if(autoretract_enabled)
+            lcdprintPGM(MSG_ON);
+          else
+            lcdprintPGM(MSG_OFF);
+          BLOCK;
+        }
+        
+      }break;  
+    
+      case ItemR_retract_length:
+    {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);lcdprintPGM(MSG_CONTROL_RETRACT);
+          lcd.setCursor(13,line);lcd.print(ftostr52(retract_length));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
           {
-            case 1: lcdprintPGM("fast:");
-              encoderpos=(long)(current_position[aidx]*1);
-              break;
-            case 2: lcdprintPGM("fine:");
-              encoderpos=(long)(current_position[aidx]*100);
-              break;
-            default:
-              lcdprintPGM("     ");
-              encoderpos=activeline*lcdslow;
-              linechanging=0;
+              encoderpos=(long)(retract_length*100);
+          }
+          else
+          {
+            retract_length= encoderpos/100.;
+            encoderpos=activeline*lcdslow;
+              
           }
           BLOCK;
           beepshort();
         }
-        
         if(linechanging)
         {
-          if(!check_axes_activity()) //check if axes is not moving
+          if(encoderpos<1) encoderpos=1;
+          if(encoderpos>990) encoderpos=990;
+          lcd.setCursor(13,line);lcd.print(ftostr52(encoderpos/100.));
+        }
+        
+      }break;
+      case ItemR_retract_feedrate:
+    {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);lcdprintPGM(MSG_CONTROL_RETRACTF);
+          lcd.setCursor(13,line);lcd.print(itostr4(retract_feedrate));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
           {
-            char cmd[10];
-            sprintf(cmd,"G0 %c%s",'X'+aidx,ftostr52(encoderpos*10/((1==linechanging)?1.:100.)));
-            enquecommand(cmd);
+              encoderpos=(long)(retract_feedrate/5);
           }
           else
-            encoderpos=(long)(current_position[aidx]*((1==linechanging)?1:100));
-          
-          lcd.setCursor(8,line);lcd.print(ftostr52(current_position[aidx]*10));
+          {
+            retract_feedrate= encoderpos*5.;
+            encoderpos=activeline*lcdslow;
+              
+          }
+          BLOCK;
+          beepshort();
         }
-      }
-      break;
-          
+        if(linechanging)
+        {
+          if(encoderpos<1) encoderpos=1;
+          if(encoderpos>990) encoderpos=990;
+          lcd.setCursor(13,line);lcd.print(itostr4(encoderpos*5));
+        }
+        
+      }break;
+      case ItemR_retract_zlift://float retract_acceleration = 7000;
+    {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);lcdprintPGM(MSG_CONTROL_RETRACT_ZLIFT);
+          lcd.setCursor(13,line);lcd.print(ftostr52(retract_zlift));;
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=(long)(retract_zlift*10);
+          }
+          else
+          {
+            retract_zlift= encoderpos/10.;
+            encoderpos=activeline*lcdslow;
+              
+          }
+          BLOCK;
+          beepshort();
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>990) encoderpos=990;
+          lcd.setCursor(13,line);lcd.print(ftostr52(encoderpos/10.));
+        }
+        
+      }break;
+      case ItemR_unretract_length:
+    {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);lcdprintPGM(MSG_CONTROL_RETRACT_RECOVER);
+          lcd.setCursor(13,line);lcd.print(ftostr52(retract_recover_length));;
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=(long)(retract_recover_length*100);
+          }
+          else
+          {
+            retract_recover_length= encoderpos/100.;
+            encoderpos=activeline*lcdslow;
+              
+          }
+          BLOCK;
+          beepshort();
+        }
+        if(linechanging)
+        {
+          if(encoderpos<0) encoderpos=0;
+          if(encoderpos>990) encoderpos=990;
+          lcd.setCursor(13,line);lcd.print(ftostr52(encoderpos/100.));
+        }
+        
+      }break;
+      
+      case ItemR_unretract_feedrate:
+    {
+        if(force_lcd_update)
+        {
+          lcd.setCursor(0,line);lcdprintPGM(MSG_CONTROL_RETRACT_RECOVERF);
+          lcd.setCursor(13,line);lcd.print(itostr4(retract_recover_feedrate));
+        }
+        
+        if((activeline!=line) )
+          break;
+        
+        if(CLICKED)
+        {
+          linechanging=!linechanging;
+          if(linechanging)
+          {
+              encoderpos=(long)retract_recover_feedrate/5;
+          }
+          else
+          {
+            retract_recover_feedrate= encoderpos*5.;
+            encoderpos=activeline*lcdslow;
+              
+          }
+          BLOCK;
+          beepshort();
+        }
+        if(linechanging)
+        {
+          if(encoderpos<1) encoderpos=1;
+          if(encoderpos>990) encoderpos=990;
+          lcd.setCursor(13,line);lcd.print(itostr4(encoderpos*5));
+        }
+        
+      }break;
+    
     default:   
       break;
   }
   line++;
  }
- updateActiveLines(ItemMA_Z,encoderpos);
+ updateActiveLines(ItemR_unretract_feedrate,encoderpos);
+#endif
 }
+
 
 
 enum {
   ItemC_exit,ItemC_temp,ItemC_move,
+#ifdef FWRETRACT
+  ItemC_rectract,
+#endif
   ItemC_store, ItemC_load,ItemC_failsafe
 };
 
@@ -1839,6 +2171,11 @@ void MainMenu::showControl()
    case ItemC_move:
       MENUITEM(  lcdprintPGM(MSG_MOTION_WIDE)  ,  BLOCK;status=Sub_MotionControl;beepshort(); ) ;
       break;
+#ifdef FWRETRACT
+    case ItemC_rectract:
+      MENUITEM(  lcdprintPGM(MSG_RECTRACT_WIDE)  ,  BLOCK;status=Sub_RetractControl;beepshort(); ) ;
+      break;
+#endif
     case ItemC_store:
     {
       if(force_lcd_update)
@@ -2116,6 +2453,8 @@ void MainMenu::update()
     if((CARDINSERTED != oldcardstatus))
     {
       force_lcd_update=true;
+      lcd_init(); // to maybe revive the lcd if static electricty killed it.
+      //Serial.println("echo: SD CHANGE");
       if(CARDINSERTED)
       {
         card.initsd();
@@ -2173,6 +2512,10 @@ void MainMenu::update()
           showPrepare(); 
         }
       }break;
+      case Sub_PrepareMove:
+      {        
+            showAxisMove();
+      }break;
       case Main_Control:
       {
         showControl(); 
@@ -2181,13 +2524,13 @@ void MainMenu::update()
       {
         showControlMotion(); 
       }break;
+      case Sub_RetractControl:
+      {
+        showControlRetract(); 
+      }break;
       case Sub_TempControl:
       {
         showControlTemp(); 
-      }break;
-      case Sub_MoveAxes:
-      {
-        showMoveAxes();
       }break;
       case Main_SD: 
       {
@@ -2303,20 +2646,19 @@ char *ftostr51(const float &x)
   return conv;
 }
 
-//  convert float to string with +1234.56 format
+//  convert float to string with +123.45 format
 char *ftostr52(const float &x)
 {
-  int xx=x*10;
+  int xx=x*100;
   conv[0]=(xx>=0)?'+':'-';
   xx=abs(xx);
-  conv[1]=(xx/100000)%10+'0';
-  conv[2]=(xx/10000)%10+'0';
-  conv[3]=(xx/1000)%10+'0';
-  conv[4]=(xx/100)%10+'0';
-  conv[5]='.';
-  conv[6]=(xx/10)%10+'0';
-  conv[7]=(xx)%10+'0';
-  conv[8]=0;
+  conv[1]=(xx/10000)%10+'0';
+  conv[2]=(xx/1000)%10+'0';
+  conv[3]=(xx/100)%10+'0';
+  conv[4]='.';
+  conv[5]=(xx/10)%10+'0';
+  conv[6]=(xx)%10+'0';
+  conv[7]=0;
   return conv;
 }
 
