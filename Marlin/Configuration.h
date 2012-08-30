@@ -101,9 +101,9 @@
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // SUMPOD
-    #define  DEFAULT_Kp 28.46
-    #define  DEFAULT_Ki 2.78 
-    #define  DEFAULT_Kd 96.99
+    #define  DEFAULT_Kp 84.18
+    #define  DEFAULT_Ki 16.26 
+    #define  DEFAULT_Kd 108.96
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -186,7 +186,8 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define max_software_endstops false  //If true, axis won't move to coordinates greater than the defined lengths below.
 #define X_MAX_LENGTH 120   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 #define Y_MAX_LENGTH 142   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
-#define Z_MAX_LENGTH 74.1  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Z_MAX_LENGTH 76.0  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+//#define Z_MAX_LENGTH 83.4  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 
 // Travel speed for tool head change
 #define TOOLHEAD_CHANGE_FEEDRATE (160*60)
@@ -208,15 +209,15 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 // default settings 
 
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800.00,102.0}  // default steps per unit//[SUMPOD specific]
-#define DEFAULT_MAX_FEEDRATE          {500, 500, 12, 80}       // (mm/sec) //[SUMPOD specific]    
-#define DEFAULT_MAX_ACCELERATION      {4000,4000,100,5000}     // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot. //[SUMPOD specific]
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800.00,100.0}  // default steps per unit//[SUMPOD specific]
+#define DEFAULT_MAX_FEEDRATE          {300, 300, 12, 80}       // (mm/sec) //[SUMPOD specific]    
+#define DEFAULT_MAX_ACCELERATION      {1500,1500,100,5000}     // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot. //[SUMPOD specific]
 
-#define DEFAULT_ACCELERATION          3000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
+#define DEFAULT_ACCELERATION          2000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves 
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
 
 // 
-#define DEFAULT_XYJERK                20.0    // (mm/sec)
+#define DEFAULT_XYJERK                15.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 
