@@ -8,7 +8,7 @@
 //User specified version info of THIS file to display in [Pronterface, etc] terminal window during startup.
 //Implementation of an idea by Prof Braino to inform user that any changes made
 //to THIS file by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2012-06-05" //Personal revision number for changes to THIS file.
+#define STRING_VERSION_CONFIG_H "2012-08-30" //Personal revision number for changes to THIS file.
 #define STRING_CONFIG_H_AUTHOR "stohn" //Who made the changes.
 
 // This determines the communication speed of the printer
@@ -87,6 +87,10 @@
 #define HEATER_2_MAXTEMP 275
 #define BED_MAXTEMP 150
 
+// If your bed has low resistance e.g. .6 ohm and throws the fuse you can duty cycle it to reduce the
+// average current. The value should be an integer and the heat bed will be turned on for 1 interval of
+// HEATER_BED_DUTY_CYCLE_DIVIDER intervals.
+//#define HEATER_BED_DUTY_CYCLE_DIVIDER 4
 
 // PID settings:
 // Comment the following line to disable PID and enable bang-bang.
@@ -104,6 +108,11 @@
     #define  DEFAULT_Kp 84.18
     #define  DEFAULT_Ki 16.26 
     #define  DEFAULT_Kd 108.96
+
+// Ultimaker
+//    #define  DEFAULT_Kp 22.2
+//    #define  DEFAULT_Ki 1.08  
+//    #define  DEFAULT_Kd 114  
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -128,6 +137,9 @@
 //===========================================================================
 //=============================Mechanical Settings===========================
 //===========================================================================
+
+// Uncomment the following line to enable CoreXY kinematics
+// #define COREXY
 
 // corse Endstop Settings
 #define ENDSTOPPULLUPS // Comment this out (using // at the start of the line) to disable the endstop pullup resistors
@@ -184,6 +196,14 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 #define min_software_endstops false //If true, axis won't move to coordinates less than HOME_POS.
 #define max_software_endstops false  //If true, axis won't move to coordinates greater than the defined lengths below.
+// Travel limits after homing
+#define X_MAX_POS 205
+#define X_MIN_POS 0
+#define Y_MAX_POS 205
+#define Y_MIN_POS 0
+#define Z_MAX_POS 200
+#define Z_MIN_POS 0
+
 #define X_MAX_LENGTH 120   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 #define Y_MAX_LENGTH 142   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 #define Z_MAX_LENGTH 76.0  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
@@ -200,7 +220,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 
 // default settings 
 
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800.00,100.0}  // default steps per unit//[SUMPOD specific]
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {106.76,106.76,800.00,91.0}  // default steps per unit//[SUMPOD specific]
 #define DEFAULT_MAX_FEEDRATE          {300, 300, 12, 80}       // (mm/sec) //[SUMPOD specific]    
 #define DEFAULT_MAX_ACCELERATION      {1500,1500,100,5000}     // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot. //[SUMPOD specific]
 
@@ -208,7 +228,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define DEFAULT_RETRACT_ACCELERATION  3000   // X, Y, Z and E max acceleration in mm/s^2 for r retracts
 
 // 
-#define DEFAULT_XYJERK                15.0    // (mm/sec)
+#define DEFAULT_XYJERK                20.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 
@@ -230,6 +250,14 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 //LCD and SD support
 //#define ULTRA_LCD  //general lcd support, also 16x2
 //#define SDSUPPORT // Enable SD Card Support in Hardware Console
+
+//#define ULTIMAKERCONTROLLER //as available from the ultimaker online store.
+//#define ULTIPANEL  //the ultipanel as on thingiverse
+
+#ifdef ULTIMAKERCONTROLLER    //automatic expansion
+ #define ULTIPANEL
+ #define NEWPANEL
+#endif 
 
 #define ULTIPANEL   //[SUMPOD specific]
 #ifdef ULTIPANEL

@@ -267,6 +267,10 @@
 #define Z_MIN_PIN          18
 #define Z_MAX_PIN          19
 
+#define Z2_STEP_PIN        36
+#define Z2_DIR_PIN         34
+#define Z2_ENABLE_PIN      30
+
 #define E0_STEP_PIN        26
 #define E0_DIR_PIN         28
 #define E0_ENABLE_PIN      24
@@ -325,6 +329,7 @@
 #define SDCARDDETECT       49 //[SUMPOD specific]
 
 #endif //ULTRALCD
+
 
 #else // RAMPS_V_1_1 or RAMPS_V_1_2 as default
 
@@ -529,18 +534,33 @@
 
 #define X_STEP_PIN         15
 #define X_DIR_PIN          21
-#define X_MIN_PIN          18
-#define X_MAX_PIN           -1
+#if X_HOME_DIR < 0
+# define X_MIN_PIN          18 
+# define X_MAX_PIN          -1
+#else
+# define X_MIN_PIN          -1
+# define X_MAX_PIN          18
+#endif
 
 #define Y_STEP_PIN         22
 #define Y_DIR_PIN          23
-#define Y_MIN_PIN          19
-#define Y_MAX_PIN          -1
+#if Y_HOME_DIR < 0
+# define Y_MIN_PIN          19 
+# define Y_MAX_PIN          -1
+#else
+# define Y_MIN_PIN          -1
+# define Y_MAX_PIN          19
+#endif
 
 #define Z_STEP_PIN         3
 #define Z_DIR_PIN          2
-#define Z_MIN_PIN          20
-#define Z_MAX_PIN          -1
+#if Z_HOME_DIR < 0
+# define Z_MIN_PIN          20 
+# define Z_MAX_PIN          -1
+#else
+# define Z_MIN_PIN          -1
+# define Z_MAX_PIN          20
+#endif
 
 #define E0_STEP_PIN         1
 #define E0_DIR_PIN          0
