@@ -189,15 +189,6 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define Z_MAX_LENGTH 76.0  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 //#define Z_MAX_LENGTH 83.4  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 
-// Travel speed for tool head change
-#define TOOLHEAD_CHANGE_FEEDRATE (160*60)
-// Distance between the nozzles to correct them automatically at tool head change
-#define E0E1_X_DISTANCE  20
-#define E0E1_Y_DISTANCE   0
-
-//#define E0E2_X_DISTANCE   0
-//#define E0E2_Y_DISTANCE   0
-
 // The position of the homing switches. Use MAX_LENGTH * -0.5 if the center should be 0, 0, 0
 #define X_HOME_POS 0
 #define Y_HOME_POS 0

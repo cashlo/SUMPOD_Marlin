@@ -141,7 +141,6 @@ volatile bool feedmultiplychanged=false;
 volatile int extrudemultiply=100; //100->1 200->2
 float current_position[NUM_AXIS] = { 0.0, 0.0, 0.0, 0.0 };
 float add_homeing[3]={0,0,0};
-float add_toolhead[3]={0,0,0}; 
 uint8_t active_extruder = 0;
 unsigned char FanSpeed=0;
 
@@ -698,19 +697,19 @@ void process_commands()
       if(code_seen(axis_codes[X_AXIS])) 
       {
         if(code_value_long() != 0) {
-          current_position[X_AXIS]=code_value()+add_homeing[X_AXIS]+add_toolhead[X_AXIS];
+          current_position[X_AXIS]=code_value()+add_homeing[0];
         }
       }
 
       if(code_seen(axis_codes[Y_AXIS])) {
         if(code_value_long() != 0) {
-          current_position[Y_AXIS]=code_value()+add_homeing[Y_AXIS]+add_toolhead[Y_AXIS];
+          current_position[Y_AXIS]=code_value()+add_homeing[1];
         }
       }
 
       if(code_seen(axis_codes[Z_AXIS])) {
         if(code_value_long() != 0) {
-          current_position[Z_AXIS]=code_value()+add_homeing[Z_AXIS]+add_toolhead[Z_AXIS];
+          current_position[Z_AXIS]=code_value()+add_homeing[2];
         }
       }
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
@@ -735,12 +734,13 @@ void process_commands()
         st_synchronize();
       for(int8_t i=0; i < NUM_AXIS; i++) {
         if(code_seen(axis_codes[i])) { 
+           current_position[i] = code_value()+add_homeing[i];  
            if(i == E_AXIS) {
              current_position[i] = code_value();  
              plan_set_e_position(current_position[E_AXIS]);
            }
            else {
-             current_position[i] = code_value()+add_homeing[i]+add_toolhead[i];  
+             current_position[i] = code_value()+add_homeing[i];  
              plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
            }
         }
@@ -1431,57 +1431,6 @@ void process_commands()
     }
     else {
       active_extruder = tmp_extruder;
-
-//MULTIPLE TOOLHEAD DISTANCE ADD ON
-      st_synchronize();
-
-      for(int8_t i=0; i < NUM_AXIS; i++) {
-        destination[i] = current_position[i];
-      }
-
-      //remove old toolhead offset from  position
-      destination[X_AXIS] -= add_toolhead[X_AXIS];
-      destination[Y_AXIS] -= add_toolhead[Y_AXIS];
-
-      //reset current offset
-      add_toolhead[X_AXIS] = 0;
-      add_toolhead[Y_AXIS] = 0;
-
-      //setup specific toolhead offsets if defined
-      if( 1==active_extruder )
-      {
-        #ifdef E0E1_X_DISTANCE
-          add_toolhead[X_AXIS]=E0E1_X_DISTANCE;
-        #endif
-        #ifdef E0E1_Y_DISTANCE
-          add_toolhead[Y_AXIS]=E0E1_Y_DISTANCE;
-        #endif
-      }
-      else
-      if( 2==active_extruder )
-      {
-        #ifdef E0E2_X_DISTANCE
-          add_toolhead[X_AXIS]=E0E2_X_DISTANCE;
-        #endif
-        #ifdef E0E2_Y_DISTANCE
-          add_toolhead[Y_AXIS]=E0E2_Y_DISTANCE;
-        #endif
-      }
-      
-      //add new toolhead offset to position
-      destination[X_AXIS] += add_toolhead[X_AXIS];
-      destination[Y_AXIS] += add_toolhead[Y_AXIS];
-      //reset the extruder position
-//DO NOT DO THIS!      current_position[E_AXIS] = 0;
-      
-      //move to new position use homing feedrate
-      saved_feedrate = feedrate;      
-      feedrate = TOOLHEAD_CHANGE_FEEDRATE; 
-      prepare_move();
-      st_synchronize();
-      feedrate = saved_feedrate;      
-//MULTIPLE TOOLHEAD DISTANCE ADD ON
-     
       SERIAL_ECHO_START;
       SERIAL_ECHO(MSG_ACTIVE_EXTRUDER);
       SERIAL_PROTOCOLLN((int)active_extruder);
