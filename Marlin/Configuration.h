@@ -8,7 +8,7 @@
 //User specified version info of THIS file to display in [Pronterface, etc] terminal window during startup.
 //Implementation of an idea by Prof Braino to inform user that any changes made
 //to THIS file by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2012-10-09" //Personal revision number for changes to THIS file.
+#define STRING_VERSION_CONFIG_H "2012-10-17" //Personal revision number for changes to THIS file.
 #define STRING_CONFIG_H_AUTHOR "stohn" //Who made the changes.
 
 // This determines the communication speed of the printer
@@ -30,12 +30,15 @@
 // Ultimaker = 7
 // Teensylu = 8
 // Gen3+ =9
+// Megatronics =70
 
 #define MOTHERBOARD 33 //[SUMPOD specific, uses RAMPS1.3/RAMPS1.4]
 
 #ifndef MOTHERBOARD
 #define MOTHERBOARD 7
 #endif
+
+
 
 //===========================================================================
 //=============================Thermal Settings  ============================
