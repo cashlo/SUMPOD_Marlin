@@ -184,10 +184,6 @@ void clamp_to_software_endstops(float target[3]);
 void setPwmFrequency(uint8_t pin, int val);
 #endif
 
-#ifdef FAST_PWM_FAN
-void setPwmFrequency(uint8_t pin, int val);
-#endif
-
 #ifndef CRITICAL_SECTION_START
   #define CRITICAL_SECTION_START  unsigned char _sreg = SREG; cli();
   #define CRITICAL_SECTION_END    SREG = _sreg;

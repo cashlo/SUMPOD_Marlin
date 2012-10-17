@@ -76,7 +76,7 @@ void plan_set_e_position(const float &e);
 
 
 
-bool check_axes_activity();
+void check_axes_activity();
 uint8_t movesplanned(); //return the nr of buffered moves
 
 extern unsigned long minsegmenttime;

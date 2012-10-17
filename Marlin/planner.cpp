@@ -436,7 +436,7 @@ void getHighESpeed()
 }
 #endif
 
-bool check_axes_activity() {
+void check_axes_activity() {
   unsigned char x_active = 0;
   unsigned char y_active = 0;  
   unsigned char z_active = 0;
@@ -504,7 +504,7 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
     manage_inactivity(); 
     LCD_STATUS;
   }
-  
+
   // The target position of the tool in absolute steps
   // Calculate target position in absolute steps
   //this should be done after the wait, because otherwise a M92 code within the gcode disrupts this calculation somehow
@@ -553,7 +553,7 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
   };
 
   block->fan_speed = FanSpeed;
-  
+
   // Compute direction bits for this block 
   block->direction_bits = 0;
   if (target[X_AXIS] < position[X_AXIS]) { 
@@ -592,13 +592,6 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
     if(feed_rate<minimumfeedrate) feed_rate=minimumfeedrate;
   } 
 
-  if (block->steps_e == 0) {
-        if(feed_rate<mintravelfeedrate) feed_rate=mintravelfeedrate;
-  }
-  else {
-    	if(feed_rate<minimumfeedrate) feed_rate=minimumfeedrate;
-  } 
-  
   float delta_mm[4];
   delta_mm[X_AXIS] = (target[X_AXIS]-position[X_AXIS])/axis_steps_per_unit[X_AXIS];
   delta_mm[Y_AXIS] = (target[Y_AXIS]-position[Y_AXIS])/axis_steps_per_unit[Y_AXIS];
@@ -633,7 +626,7 @@ void plan_buffer_line(const float &x, const float &y, const float &z, const floa
 #endif
   //  END OF SLOW DOWN SECTION    
 
-  
+
   block->nominal_speed = block->millimeters * inverse_second; // (mm/sec) Always > 0
   block->nominal_rate = ceil(block->step_event_count * inverse_second); // (step/sec) Always > 0
 
