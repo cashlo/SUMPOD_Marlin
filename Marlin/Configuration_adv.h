@@ -70,7 +70,7 @@
 // When first starting the main fan, run it at full speed for the
 // given number of milliseconds.  This gets the fan spinning reliably
 // before setting a PWM value. (Does not work with software PWM for fan on Sanguinololu)
-//#define FAN_KICKSTART_TIME 100
+#define FAN_KICKSTART_TIME 100
 
 // Extruder cooling fans
 // Configure fan pin outputs to automatically turn on/off when the associated
@@ -88,7 +88,7 @@
 //=============================Mechanical Settings===========================
 //===========================================================================
 
-#define ENDSTOPS_ONLY_FOR_HOMING // If defined the endstops will only be used for homing
+//#define ENDSTOPS_ONLY_FOR_HOMING // If defined the endstops will only be used for homing
 
 
 //// AUTOSET LOCATIONS OF LIMIT SWITCHES
@@ -255,9 +255,9 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 // be commented out otherwise
 #define SDCARDDETECTINVERTED 
 
-#ifdef ULTIPANEL
- #undef SDCARDDETECTINVERTED
-#endif
+//#ifdef ULTIPANEL              //[[SUMPOD specific]]
+// #undef SDCARDDETECTINVERTED  //[[SUMPOD specific]]
+//#endif                        //[[SUMPOD specific]]
 
 // Power Signal Control Definitions
 // By default use ATX definition
@@ -282,9 +282,9 @@ const unsigned int dropsegments=5; //everything with less than this number of st
 // The number of linear motions that can be in the plan at any give time.  
 // THE BLOCK_BUFFER_SIZE NEEDS TO BE A POWER OF 2, i.g. 8,16,32 because shifts and ors are used to do the ringbuffering.
 #if defined SDSUPPORT
-  #define BLOCK_BUFFER_SIZE 16   // SD,LCD,Buttons take more memory, block buffer needs to be smaller
+  #define BLOCK_BUFFER_SIZE 32   // SD,LCD,Buttons take more memory, block buffer needs to be smaller
 #else
-  #define BLOCK_BUFFER_SIZE 16 // maximize block buffer
+  #define BLOCK_BUFFER_SIZE 32 // maximize block buffer
 #endif
 
 

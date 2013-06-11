@@ -376,6 +376,22 @@ static void lcd_implementation_status_screen()
     int tTarget=int(degTargetHotend(0) + 0.5);
 
 #if LCD_WIDTH < 20
+
+# if EXTRUDERS > 1 && TEMP_SENSOR_BED != 0
+    lcd.setCursor(0, 0);
+    lcd.print(LCD_STR_THERMOMETER[0]);
+    lcd.print(itostr3(tHotend));
+    lcd.print(LCD_STR_DEGREE[0]);
+    lcd.print("|");
+    tHotend = int(degHotend(1) + 0.5);
+    lcd.print(itostr3(tHotend));
+    lcd.print(LCD_STR_DEGREE[0]);
+    lcd.print("|");
+    lcd.print(LCD_STR_BEDTEMP[0]);
+    tHotend=int(degBed() + 0.5);
+    lcd.print(itostr3(tHotend));
+    lcd.print(LCD_STR_DEGREE[0]);
+# else..
     lcd.setCursor(0, 0);
     lcd.print(itostr3(tHotend));
     lcd.print('/');
@@ -397,6 +413,7 @@ static void lcd_implementation_status_screen()
     lcd.print('/');
     lcd.print(itostr3left(tTarget));
 # endif//EXTRUDERS > 1 || TEMP_SENSOR_BED != 0
+# endif//EXTRUDERS > 1 && TEMP_SENSOR_BED != 0
 
 #else//LCD_WIDTH > 19
     lcd.setCursor(0, 0);

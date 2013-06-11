@@ -1,55 +1,27 @@
-# Sprinter Arduino Project Makefile
+# Marlin Project Makefile
 #
-# Makefile Based on:
-# Arduino 0011 Makefile
-# Arduino adaptation by mellis, eighthave, oli.keller
-# Marlin adaption by Daid
+#  1. Type "make" and press enter to compile/verify your program.
 #
-# This has been tested with Arduino 0022.
-#
-# This makefile allows you to build sketches from the command line
-# without the Arduino environment (or Java).
-#
-# Detailed instructions for using the makefile:
-#
-#  1. Modify the line containg "ARDUINO_INSTALL_DIR" to point to the directory that
-#     contains the Arduino installation (for example, under Mac OS X, this
-#     might be /Applications/arduino-0012).
-#
-#  2. Modify the line containing "UPLOAD_PORT" to refer to the filename
-#     representing the USB or serial connection to your Arduino board
-#     (e.g. UPLOAD_PORT = /dev/tty.USB0).  If the exact name of this file
-#     changes, you can use * as a wildcard (e.g. UPLOAD_PORT = /dev/tty.usb*).
-#
-#  3. Set the line containing "MCU" to match your board's processor.
-#     Older one's are atmega8 based, newer ones like Arduino Mini, Bluetooth
-#     or Diecimila have the atmega168.  If you're using a LilyPad Arduino,
-#     change F_CPU to 8000000. If you are using Gen7 electronics, you
-#     probably need to use 20000000. Either way, you must regenerate
-#     the speed lookup table with create_speed_lookuptable.py.
-#
-#  4. Type "make" and press enter to compile/verify your program.
-#
-#  5. Type "make upload", reset your Arduino board, and press enter to
+#  2. Type "make upload", reset your Arduino board, and press enter to
 #     upload your program to the Arduino board.
 #
 # Note that all settings are set with ?=, this means you can override them
-# from the commandline with "make HARDWARE_MOTHERBOARD=71" for example
+# from the commandline with "make HARDWARE_MOTHERBOARD=34" for example
 
 # This defined the board you are compiling for (see Configuration.h for the options)
-HARDWARE_MOTHERBOARD ?= 11
+HARDWARE_MOTHERBOARD ?= 33
 
 # Arduino source install directory, and version number
-ARDUINO_INSTALL_DIR  ?= ../../arduino-0022
-ARDUINO_VERSION      ?= 22
+ARDUINO_INSTALL_DIR  ?= ../Arduino
+ARDUINO_VERSION      ?= 101
 
 # You can optionally set a path to the avr-gcc tools. Requires a trailing slash. (ex: /usr/local/avr-gcc/bin)
-AVR_TOOLS_PATH ?=
+AVR_TOOLS_PATH ?= /usr/local/bin/
 
 #Programmer configuration
 UPLOAD_RATE        ?= 115200
-AVRDUDE_PROGRAMMER ?= arduino
-UPLOAD_PORT        ?= /dev/arduino
+AVRDUDE_PROGRAMMER ?= wiring
+UPLOAD_PORT        ?= /dev/tty.usbmodem641
 
 #Directory used to build files in, contains all the build files, from object files to the final hex file.
 BUILD_DIR          ?= applet
@@ -87,6 +59,11 @@ else ifeq  ($(HARDWARE_MOTHERBOARD),33)
 HARDWARE_VARIANT ?= arduino
 MCU              ?= atmega2560
 else ifeq  ($(HARDWARE_MOTHERBOARD),34)
+HARDWARE_VARIANT ?= arduino
+MCU              ?= atmega2560
+
+#RUMBA
+else ifeq  ($(HARDWARE_MOTHERBOARD),80)
 HARDWARE_VARIANT ?= arduino
 MCU              ?= atmega2560
 
@@ -171,15 +148,15 @@ F_CPU ?= 16000000
 # that derives from that, and their source are present in
 # the main Marlin source directory
 ifeq ($(HARDWARE_VARIANT), arduino)
-HARDWARE_DIR = $(ARDUINO_INSTALL_DIR)/hardware
+HARDWARE_SRC = $(ARDUINO_INSTALL_DIR)
 else
 ifeq ($(shell [ $(ARDUINO_VERSION) -ge 100 ] && echo true), true)
-HARDWARE_DIR = ../ArduinoAddons/Arduino_1.x.x
+HARDWARE_SRC = ../ArduinoAddons/Arduino_1.x.x/$(HARDWARE_VARIANT)/cores/arduino
 else
-HARDWARE_DIR = ../ArduinoAddons/Arduino_0.xx
+HARDWARE_SRC = ../ArduinoAddons/Arduino_0.xx/$(HARDWARE_VARIANT)/cores/arduino
 endif
 endif
-HARDWARE_SRC = $(HARDWARE_DIR)/$(HARDWARE_VARIANT)/cores/arduino
+
 
 TARGET = $(notdir $(CURDIR))
 
@@ -204,11 +181,26 @@ else
 HARDWARE_SUB_VARIANT ?= standard
 VPATH += $(HARDWARE_DIR)/$(HARDWARE_VARIANT)/variants/$(HARDWARE_SUB_VARIANT)
 endif
+
+ifeq ($(shell [ $(ARDUINO_VERSION) -ge 100 ] && echo true), true)
+VPATH += ../ArduinoAddons/Arduino_1.x.x/libraries/U8glib
+VPATH += ../ArduinoAddons/Arduino_1.x.x/libraries/U8glib/utility
+else
+VPATH += ../ArduinoAddons/Arduino_0.xx/libraries/U8glib
+VPATH += ../ArduinoAddons/Arduino_0.xx/libraries/U8glib/utility
+endif
+
 SRC = wiring.c \
-	wiring_analog.c wiring_digital.c \
-	wiring_pulse.c \
-	wiring_shift.c WInterrupts.c
-CXXSRC = WMath.cpp WString.cpp Print.cpp Marlin_main.cpp	\
+	wiring_analog.c wiring_digital.c wiring_pulse.c wiring_shift.c WInterrupts.c \
+	u8g_bitmap.c u8g_clip.c u8g_circle.c u8g_cursor.c u8g_ellipse.c u8g_font.c u8g_font_data.c u8g_line.c \
+	u8g_rect.c u8g_rot.c u8g_scale.c u8g_state.c u8g_ll_api.c u8g_page.c \
+	u8g_pb.c u8g_pb8h1f.c u8g_pb8h1.c u8g_pb8h8.c u8g_pb8h2.c u8g_pb8v1.c u8g_pb8v2.c \
+	u8g_pb14v1.c u8g_pb16h1.c u8g_pb16h2.c u8g_pb32h1.c u8g_pb16v1.c u8g_pb16v2.c\
+	u8g_delay.c u8g_com_api.c u8g_com_null.c u8g_com_arduino_common.c u8g_com_arduino_hw_spi.c \
+	u8g_dev_null.c u8g_dev_st7565_dogm128.c
+
+
+CXXSRC = WMath.cpp WString.cpp Print.cpp Tone.cpp U8glib.cpp Marlin_main.cpp	\
 	MarlinSerial.cpp Sd2Card.cpp SdBaseFile.cpp SdFatUtil.cpp	\
 	SdFile.cpp SdVolume.cpp motion_control.cpp planner.cpp		\
 	stepper.cpp temperature.cpp cardreader.cpp ConfigurationStore.cpp \
@@ -230,9 +222,11 @@ MAKEFILE = Makefile
 # Debugging format.
 # Native formats for AVR-GCC's -g are stabs [default], or dwarf-2.
 # AVR (extended) COFF requires stabs, plus an avr-objcopy run.
-DEBUG = stabs
+#DEBUG = stabs
+#OPT = s
 
-OPT = s
+DEBUG = 0
+OPT = 2
 
 DEFINES ?=
 
@@ -277,17 +271,20 @@ ifneq ($(HARDWARE_MOTHERBOARD),)
 CTUNING += -DMOTHERBOARD=${HARDWARE_MOTHERBOARD}
 endif
 #CEXTRA = -Wa,-adhlns=$(<:.c=.lst)
+#CEXTRA = -S -fverbose-asm
 
 CFLAGS := $(CDEBUG) $(CDEFS) $(CINCS) -O$(OPT) $(CWARN) $(CEXTRA) $(CTUNING)
-CXXFLAGS :=         $(CDEFS) $(CINCS) -O$(OPT) -Wall    $(CEXTRA) $(CTUNING)
+#-flto -fwhole-program 
+CXXFLAGS := $(CDEFS) $(CINCS) -O$(OPT) -Wall $(CEXTRA) $(CTUNING)
+#-flto -fwhole-program 
 #ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs
-LDFLAGS = -lm
+LDFLAGS = -lm -Wl,--relax
 
 
 # Programming support using avrdude. Settings and variables.
 AVRDUDE_PORT = $(UPLOAD_PORT)
-AVRDUDE_WRITE_FLASH = -U flash:w:$(BUILD_DIR)/$(TARGET).hex:i
-AVRDUDE_FLAGS = -D -C $(ARDUINO_INSTALL_DIR)/hardware/tools/avrdude.conf \
+AVRDUDE_WRITE_FLASH = -V -U flash:w:$(BUILD_DIR)/$(TARGET).hex:i
+AVRDUDE_FLAGS = -D -C $(ARDUINO_INSTALL_DIR)/avrdude.conf \
 	-p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) \
 	-b $(UPLOAD_RATE)
 
