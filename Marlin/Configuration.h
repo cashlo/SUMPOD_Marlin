@@ -74,7 +74,7 @@
 //============================== Delta Settings =============================
 //===========================================================================
 // Enable DELTA kinematics
-#define DELTA
+//#define DELTA
 
 // Make delta curves from many straight lines (linear interpolation).
 // This is a trade-off between visible corners (not enough segments)
@@ -323,7 +323,7 @@ const bool Z_ENDSTOPS_INVERTING = true; // set to true to invert the logic of th
 #define X_MIN_POS 0     
 #define Y_MAX_POS 146   //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 #define Y_MIN_POS 0     
-#define Z_MAX_POS 63.72  //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
+#define Z_MAX_POS 63.55 //[SUMPOD specific, CHANGE FOR YOUR SUMPOD]
 #define Z_MIN_POS 0
 
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
