@@ -200,12 +200,12 @@ SRC = wiring.c \
 	u8g_dev_null.c u8g_dev_st7565_dogm128.c
 
 
-CXXSRC = WMath.cpp WString.cpp Print.cpp Tone.cpp U8glib.cpp Marlin_main.cpp	\
+CXXSRC = WMath.cpp WString.cpp Print.cpp U8glib.cpp Marlin_main.cpp	\
 	MarlinSerial.cpp Sd2Card.cpp SdBaseFile.cpp SdFatUtil.cpp	\
 	SdFile.cpp SdVolume.cpp motion_control.cpp planner.cpp		\
 	stepper.cpp temperature.cpp cardreader.cpp ConfigurationStore.cpp \
 	watchdog.cpp
-CXXSRC += LiquidCrystal.cpp ultralcd.cpp SPI.cpp Servo.cpp
+CXXSRC += LiquidCrystal.cpp ultralcd.cpp SPI.cpp Servo.cpp Tone.cpp
 
 #Check for Arduino 1.0.0 or higher and use the correct sourcefiles for that version
 ifeq ($(shell [ $(ARDUINO_VERSION) -ge 100 ] && echo true), true)
@@ -283,7 +283,7 @@ LDFLAGS = -lm -Wl,--relax
 
 # Programming support using avrdude. Settings and variables.
 AVRDUDE_PORT = $(UPLOAD_PORT)
-AVRDUDE_WRITE_FLASH = -V -U flash:w:$(BUILD_DIR)/$(TARGET).hex:i
+AVRDUDE_WRITE_FLASH = -U flash:w:$(BUILD_DIR)/$(TARGET).hex:i
 AVRDUDE_FLAGS = -D -C $(ARDUINO_INSTALL_DIR)/avrdude.conf \
 	-p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) \
 	-b $(UPLOAD_RATE)
