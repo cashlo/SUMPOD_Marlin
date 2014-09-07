@@ -26,6 +26,12 @@ UPLOAD_PORT        ?= /dev/tty.usbmodem641
 #Directory used to build files in, contains all the build files, from object files to the final hex file.
 BUILD_DIR          ?= applet
 
+# This defines whether Liquid_TWI2 support will be built
+LIQUID_TWI2        ?= 0
+
+# this defines if Wire is needed
+WIRE               ?= 0
+
 ############################################################################
 # Below here nothing should be changed...
 
@@ -116,6 +122,12 @@ MCU              ?= at90usb1286
 else ifeq  ($(HARDWARE_MOTHERBOARD),82)
 HARDWARE_VARIANT ?= Teensy
 MCU              ?= at90usb646
+else ifeq  ($(HARDWARE_MOTHERBOARD),83)
+HARDWARE_VARIANT ?= Teensy
+MCU              ?= at90usb1286
+else ifeq  ($(HARDWARE_MOTHERBOARD),84)
+HARDWARE_VARIANT ?= Teensy
+MCU              ?= at90usb1286
 
 #Gen3+
 else ifeq  ($(HARDWARE_MOTHERBOARD),9)
@@ -139,6 +151,14 @@ MCU              ?= atmega644p
 
 #Rambo
 else ifeq  ($(HARDWARE_MOTHERBOARD),301)
+HARDWARE_VARIANT ?= arduino
+MCU              ?= atmega2560
+
+# Azteeg
+else ifeq  ($(HARDWARE_MOTHERBOARD),67)
+HARDWARE_VARIANT ?= arduino
+MCU              ?= atmega2560
+else ifeq  ($(HARDWARE_MOTHERBOARD),68)
 HARDWARE_VARIANT ?= arduino
 MCU              ?= atmega2560
 
@@ -176,9 +196,27 @@ VPATH += $(HARDWARE_SRC)
 ifeq ($(HARDWARE_VARIANT), arduino)
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/LiquidCrystal
 VPATH += $(ARDUINO_INSTALL_DIR)/libraries/SPI
+ifeq ($(LIQUID_TWI2), 1)
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Wire
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Wire/utility
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/LiquidTWI2
+endif
+ifeq ($(WIRE), 1)
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Wire
+VPATH += $(ARDUINO_INSTALL_DIR)/libraries/Wire/utility
+endif
 else
 VPATH += $(HARDWARE_DIR)/libraries/LiquidCrystal
 VPATH += $(HARDWARE_DIR)/libraries/SPI
+ifeq ($(LIQUID_TWI2), 1)
+VPATH += $(HARDWARE_DIR)/libraries/Wire
+VPATH += $(HARDWARE_DIR)/libraries/Wire/utility
+VPATH += $(HARDWARE_DIR)/libraries/LiquidTWI2
+endif
+ifeq ($(WIRE), 1)
+VPATH += $(HARDWARE_DIR)/libraries/Wire
+VPATH += $(HARDWARE_DIR)/libraries/Wire/utility
+endif
 endif
 ifeq ($(HARDWARE_VARIANT), arduino)
 HARDWARE_SUB_VARIANT ?= mega
@@ -212,6 +250,11 @@ CXXSRC = WMath.cpp WString.cpp Print.cpp U8glib.cpp Marlin_main.cpp	\
 	stepper.cpp temperature.cpp cardreader.cpp ConfigurationStore.cpp \
 	watchdog.cpp
 CXXSRC += LiquidCrystal.cpp ultralcd.cpp SPI.cpp Servo.cpp Tone.cpp
+
+ifeq ($(WIRE), 1)
+SRC += twi.c
+CXXSRC += Wire.cpp
+endif
 
 #Check for Arduino 1.0.0 or higher and use the correct sourcefiles for that version
 ifeq ($(shell [ $(ARDUINO_VERSION) -ge 100 ] && echo true), true)
@@ -278,6 +321,7 @@ CTUNING += -DMOTHERBOARD=${HARDWARE_MOTHERBOARD}
 endif
 #CEXTRA = -Wa,-adhlns=$(<:.c=.lst)
 #CEXTRA = -S -fverbose-asm
+CEXTRA = -fno-use-cxa-atexit
 
 CFLAGS := $(CDEBUG) $(CDEFS) $(CINCS) -O$(OPT) $(CWARN) $(CEXTRA) $(CTUNING)
 #-flto -fwhole-program 
