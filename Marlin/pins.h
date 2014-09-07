@@ -384,8 +384,8 @@
 #define BEEPER             57 //AUX-3 //[SUMPOD specific]
 
 //encoder pins are directly attached
-#define BTN_EN1            42 //AUX-2 //[SUMPOD specific]
-#define BTN_EN2            44 //AUX-2 //[SUMPOD specific]
+#define BTN_EN1            44 //AUX-2 //[SUMPOD specific]
+#define BTN_EN2            42 //AUX-2 //[SUMPOD specific]
 #define BTN_ENC            64 //AUX-2 (the click) //[SUMPOD specific]
 
 #define BLEN_A 0

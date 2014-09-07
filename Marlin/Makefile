@@ -203,7 +203,7 @@ SRC = wiring.c \
 	u8g_pb.c u8g_pb8h1f.c u8g_pb8h1.c u8g_pb8h8.c u8g_pb8h2.c u8g_pb8v1.c u8g_pb8v2.c \
 	u8g_pb14v1.c u8g_pb16h1.c u8g_pb16h2.c u8g_pb32h1.c u8g_pb16v1.c u8g_pb16v2.c\
 	u8g_delay.c u8g_com_api.c u8g_com_null.c u8g_com_arduino_common.c u8g_com_arduino_hw_spi.c \
-	u8g_dev_null.c u8g_dev_st7565_dogm128.c
+	u8g_dev_null.c u8g_dev_st7565_dogm128.c u8g_dev_st7565_nhd_c12864.c
 
 
 CXXSRC = WMath.cpp WString.cpp Print.cpp U8glib.cpp Marlin_main.cpp	\
